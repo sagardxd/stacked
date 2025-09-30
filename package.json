@@ -1,0 +1,8 @@
+{
+  "name": "stack-inn",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
