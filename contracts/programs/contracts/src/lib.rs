@@ -5,7 +5,9 @@ declare_id!("DKzf13FTkMC2p2UxqL3s4UEp5V3BFGNid2HGhkq9NBJu");
 #[program]
 pub mod contracts {
     use anchor_lang::{
-        solana_program::{program::invoke_signed, stake::instruction},
+        solana_program::{
+            clock, program::invoke_signed, stake::instruction, sysvar::stake_history::StakeHistory,
+        },
         system_program,
     };
 
@@ -41,7 +43,10 @@ pub mod contracts {
         let stake_acc = ctx.accounts.stake_account.to_account_info();
         let stake_auth = ctx.accounts.stake_authority.to_account_info();
         let validator_acc = ctx.accounts.validator.to_account_info();
+        let stake_history = ctx.accounts.stake_history.to_account_info();
+        let stake_config = ctx.accounts.stake_config.to_account_info();
         let stake_program_acc = ctx.accounts.stake_program.to_account_info();
+        let clock_acc = ctx.accounts.clock.to_account_info();
         let position_key = position.key();
 
         let delegate =
@@ -54,7 +59,15 @@ pub mod contracts {
 
         invoke_signed(
             &delegate,
-            &[stake_acc, validator_acc, stake_auth, stake_program_acc],
+            &[
+                stake_acc,
+                validator_acc,
+                stake_auth,
+                clock_acc,
+                stake_history,
+                stake_config,
+                stake_program_acc,
+            ],
             &[signer_seeds],
         )?;
 
@@ -143,6 +156,17 @@ pub mod contracts {
             ErrorCode::Unauthorized
         );
 
+        let clock = Clock::get()?;
+        let now_u64 = clock.unix_timestamp as u64;
+        let unlock_time = pos
+            .start_ts
+            .checked_add(pos.maturity_ts)
+            .ok_or(error!(ErrorCode::ArithmeticOverflow))?;
+        require!(
+            now_u64 >= unlock_time || pos.deactivated_at.is_some(),
+            ErrorCode::NotMature
+        );
+
         let stake_acc = ctx.accounts.stake_account.to_account_info();
         let stake_auth = ctx.accounts.stake_authority.to_account_info();
         let stake_program_acc = ctx.accounts.stake_program.to_account_info();
@@ -197,6 +221,9 @@ pub struct CreatePosition<'info> {
     /// CHECK: stake_program is the expected stake program id
     pub stake_program: UncheckedAccount<'info>,
     pub clock: Sysvar<'info, Clock>,
+    pub stake_history: Sysvar<'info, StakeHistory>,
+    /// CHECK: stake_config is the expected stake config program id
+    pub stake_config: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -303,4 +330,8 @@ pub enum ErrorCode {
     DeactivateFailed,
     #[msg("Withdraw failed")]
     WithdrawFailed,
+    #[msg("Position not matured yet")]
+    NotMature,
+    #[msg("Arithmetic overflow")]
+    ArithmeticOverflow,
 }
