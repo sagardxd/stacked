@@ -8,6 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
+  "packageManager": "bun@1.2.5",
   "workspaces": [
     "apps/backend",
     "apps/poller",

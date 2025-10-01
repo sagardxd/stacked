@@ -4,6 +4,8 @@
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
+  "version": "1.0.0",
+  "packageManager": "yarn@1.22.22",
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1"
   },

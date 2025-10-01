@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String? @unique
+  username     String?
+  walletPubkey String  @unique
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  Position     Position[]
+  Listing      Listing[]
+  ListingBuyer Listing[]  @relation("ListingBuyer")
+}
+
+model Validator {
+  id                String  @id @default(cuid())
+  name              String
+  logoUrl           String?
+  website           String?
+  voteAccountPubkey String  @unique
+  commission        Int
+  activeStakeLampts BigInt
+  apr               Float
+  aprUpdateAt       DateTime?
+  
+  positions Position[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Position {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  seed               String
+  stakeAccountPubkey String?
+
+  validatorId  String
+  validator    Validator      @relation(fields: [validatorId], references: [id])
+  lamports     BigInt
+  status       PositionStatus @default(PENDING)
+  txSignature  String?
+  activeAt     DateTime?
+  closeAt      DateTime?
+  transferable Boolean        @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Listing   Listing[]
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sellerId      String
+  seller        User          @relation(fields: [sellerId], references: [id])
+  positionId    String
+  position      Position      @relation(fields: [positionId], references: [id])
+  priceLamports BigInt
+  status        ListingStatus @default(OPEN)
+  buyerId       String?
+  buyer         User?         @relation("ListingBuyer", fields: [buyerId], references: [id])
+}
+
+enum PositionStatus {
+  PENDING
+  ACTIVE
+  CLOSED
+  FAILED
+  EXPIRED
+}
+
+enum ListingStatus {
+  OPEN
+  CANCELLED
+  SOLD
+}

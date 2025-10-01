@@ -4,9 +4,9 @@ import { Contracts } from "../target/types/contracts";
 import { parse, v4 as uuidv4 } from "uuid";
 import { assert } from "chai";
 
-function derivePositionPda(position_id: string) {
+function derivePositionPda(position_id: Buffer) {
   const [pda, bump] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("position"), Buffer.from(parse(position_id))],
+    [Buffer.from("position"), position_id],
     anchor.workspace.contracts.programId
   );
   return { pda, bump };
@@ -27,13 +27,13 @@ describe("contracts", () => {
   const program = anchor.workspace.contracts as Program<Contracts>;
 
   const user = anchor.web3.Keypair.generate();
-  const position_id = uuidv4();
-  const { pda, bump } = derivePositionPda(position_id);
+  const positionIdBuf = anchor.web3.Keypair.generate().publicKey.toBuffer();
+  const { pda, bump } = derivePositionPda(positionIdBuf);
 
   it("Airdrop to test user", async () => {
     const sig = await provider.connection.requestAirdrop(
       user.publicKey,
-      2_000_000_000 
+      2_000_000_000
     );
     await provider.connection.confirmTransaction(sig);
     const balance = await provider.connection.getBalance(user.publicKey);
@@ -54,27 +54,44 @@ describe("contracts", () => {
 
     const txCreateStake = new anchor.web3.Transaction().add(createStakeIx);
     await provider.sendAndConfirm(txCreateStake, [user, stakeAccount]);
-    const validatorPubkey = anchor.web3.Keypair.generate().publicKey;
+    let validatorPubkey = anchor.web3.Keypair.generate().publicKey;
+    const voteAccounts = await provider.connection.getVoteAccounts();
+    if (voteAccounts.current.length > 0) {
+      validatorPubkey = new anchor.web3.PublicKey(voteAccounts.current[0].votePubkey);
+    } else if (voteAccounts.delinquent.length > 0) {
+      validatorPubkey = new anchor.web3.PublicKey(voteAccounts.delinquent[0].votePubkey);
+    } else {
+      // fallback (shouldn't happen on test-validator)
+      validatorPubkey = user.publicKey; // or throw an error
+    }
+
     console.log("Stake account created:", stakeAccount.publicKey.toBase58());
-    const tx = await program.methods
-      .createPosition(
-        Array.from(Buffer.from(position_id.padEnd(32, "\0"))), // positionId as 32-byte array
-        new anchor.BN(0), // lockDuration
-        false
-      )
-      .accounts({
-        position: pda,
-        stakeAccount: stakeAccount.publicKey,
-        stakeAuthority: deriveStakeAuthPda(pda).pda,
-        owner: user.publicKey,
-        validator: validatorPubkey,
-        systemProgram: anchor.web3.SystemProgram.programId,
-        stakeProgram: anchor.web3.StakeProgram.programId,
-        clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
-      } as any)
-      .signers([user])
-      .rpc();
-    console.log("Your transaction signature", tx);
+    try {
+      const tx = await program.methods
+        .createPosition(
+          Array.from(positionIdBuf), // positionId as 32-byte array
+          new anchor.BN(0), // lockDuration
+          false
+        )
+        .accounts({
+          position: pda,
+          stakeAccount: stakeAccount.publicKey,
+          stakeAuthority: deriveStakeAuthPda(pda).pda,
+          owner: user.publicKey,
+          validator: validatorPubkey,
+          systemProgram: anchor.web3.SystemProgram.programId,
+          stakeProgram: anchor.web3.StakeProgram.programId,
+          clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+          stakeHistory: anchor.web3.SYSVAR_STAKE_HISTORY_PUBKEY,
+          stakeConfig: new anchor.web3.PublicKey(
+            "StakeConfig11111111111111111111111111111111"
+          ),
+        } as any)
+        .signers([user])
+        .rpc();
+    } catch (error) {
+      console.error("Error creating position:", error);
+    }
     const position = await program.account.position.fetch(pda);
     console.log("Position:", position);
   });
