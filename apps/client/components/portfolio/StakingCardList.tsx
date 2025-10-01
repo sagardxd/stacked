@@ -59,12 +59,3 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
         ))
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    contentContainer: {
-        paddingVertical: 8,
-    },
-});
