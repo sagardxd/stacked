@@ -5,11 +5,11 @@ import UserBalance from '@/components/portfolio/UserBalance'
 import { BalanceRing } from '@/components/portfolio/BalanceRing'
 import { AppView } from '@/components/app-view'
 import { StakingCardList } from '@/components/portfolio/StakingCardList'
-import { StakingAsset } from '@/components/portfolio/StakingCard'
 import { AppPage } from '@/components/app-page'
+import { SipAsset, StakingAsset } from '@/types/asset.types'
 
 const Portfolio = () => {
-  const handleCardPress = (asset: StakingAsset) => {
+  const handleCardPress = (asset: StakingAsset | SipAsset) => {
     console.log('Pressed staking card:', asset.name);
   };
 
@@ -29,8 +29,8 @@ const Portfolio = () => {
             amount="$1560.60"
             subtitle="+0.64% ($9.98)"
             segments={[
-              { value: 0.6, color: '#9A5BFF', label: "Sol" },
-              { value: 0.4, color: '#22D3EE', label: "Eth" },
+              { value: 0.6, color: '#8C6DFA', label: "Sol" },
+              { value: 0.4, color: '#50C4AC', label: "Eth" },
             ]}
             gapDegrees={9}
           />

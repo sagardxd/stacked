@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     fontFamily: 'SkModernistBold',
-    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   small: {
@@ -70,6 +69,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontFamily: 'SkModernistRegular',
-    opacity: 0.7,
+    opacity: 1,
   },
 })

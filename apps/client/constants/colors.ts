@@ -11,15 +11,17 @@ export const Colors = {
     text: '#11181C',
     tint: lightLavender,
     accent: lightLavender,
+    cardBg: '#141414cc'
   },
   dark: {
     background: darkBackground,
-    border: '#333333',
+    border: '#ffffff1a',
     icon: '#BFBFCF',
     tabIconDefault: '#BFBFCF',
     tabIconSelected: lightLavender,
     text: '#E0E0E0',
     tint: lightLavender,
     accent: lightLavender,
+    cardBg: '#141414cc'
   },
 }
