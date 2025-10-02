@@ -11,7 +11,8 @@ export const useAssetStore = create<AssetStore>((set, get) => ({
     assets: [],
     setAssets: (newAssets) => set({ assets: newAssets }),
     getAsset: (asset) => {
-        return get().assets.find((a: AssetData) => a.asset === asset) || null
+        const assets = get().assets ?? []
+        return assets.find((a: AssetData) => a.asset === asset) || null
     }
 }))
 

@@ -5,12 +5,11 @@ import { UiIconSymbol } from '@/components/ui/ui-icon-symbol'
 export default function TabLayout() {
   return (
     <Tabs screenOptions={{ headerShown: false }}>
-      {/* The index redirects to the account screen */}
-      <Tabs.Screen name="index" options={{ tabBarItemStyle: { display: 'none' } }} />
+      {/* <Tabs.Screen name="home" options={{ tabBarItemStyle: { display: 'none' } }} /> */}
       <Tabs.Screen
-        name="account"
+        name="home"
         options={{
-          title: 'Account',
+          title: 'Home',
           tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="home" color={color} />,
         }}
       />

@@ -14,7 +14,6 @@ export const SipCard: React.FC<SipCardProps> = ({ asset, onPress }) => {
   const border = useThemeColor({}, 'border');
   const cardBg = useThemeColor({}, 'cardBg');
 
-
   return (
     <View style={styles.cardcontainer}>
       <Pressable
