@@ -4,8 +4,9 @@ import { useAssetStore } from '@/store/asset.store';
 import { logger } from '@/utils/logger.service';
 import { AppPage } from '@/components/app-page';
 import AssetHeader from '@/components/home/AssetHeader';
-import { Wallet } from '@/components/chart/Wallet';
-import { StyleSheet, View } from 'react-native';
+import Graph from '@/components/chart/Wallet';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import ValidatorList from '@/components/validators/ValidatorList';
 
 const Home = () => {
     const [assets, setAssets] = useState<AssetData[]>([])
@@ -53,10 +54,13 @@ const Home = () => {
 
     return (
         <AppPage>
-            <AssetHeader asset={Asset.SOL} />
-            <View style={styles.chartContainer}>
-                <Wallet />
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <AssetHeader asset={Asset.SOL} />
+                <View style={styles.chartContainer}>
+                    <Graph />
+                </View>
+                <ValidatorList />
+            </ScrollView>
         </AppPage>
     )
 }

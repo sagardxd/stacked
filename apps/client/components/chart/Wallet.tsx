@@ -25,7 +25,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 const touchableCursorSize = 80;
 const GRAPH_HORIZONTAL_PADDING = 0; // Add horizontal padding to keep cursor in view
 
-export const Wallet = () => {
+export const Graph = () => {
   const cardBg = useThemeColor({}, "cardBg") 
   const window = useWindowDimensions();
 
@@ -132,3 +132,6 @@ export const Wallet = () => {
     </View>
   );
 };
+
+
+export default Graph
