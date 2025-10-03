@@ -7,12 +7,17 @@ import { AppView } from '@/components/app-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Image } from 'expo-image';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import AppBackBtn from '@/components/app-back-button';
+import { AppCardView } from '@/components/app-card-view';
+import DetailField from '@/components/common/DetailField';
+import StatCard from '@/components/common/StatCard';
 
 const ValidatorDetails = () => {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
+    const cardBg = useThemeColor({}, 'cardBg');
+    const border = useThemeColor({}, 'border');
 
     const validator = useMemo<ValidatorDetailsType>(() => ({
         id: 'xLabscif2DLnYg39rQThqi7A9E45L9qiysRZhmZ1ARE',
@@ -34,79 +39,115 @@ const ValidatorDetails = () => {
     const openLink = (url: string) => {
         Linking.openURL(url).catch((err: any) => console.log("Couldn't load page", err));
     };
+
     return (
         <AppPage>
             <AppBackBtn onPress={() => router.back()} />
-            <AppView style={styles.headerContainer}>
-                <AppView style={styles.headerRow}>
-                    <Image source={{ uri: validator.avatar_url }} style={styles.avatar} />
-                    <AppView style={styles.headerInfo}>
-                        <AppText type="medium" style={styles.name}>{validator.name}</AppText>
-                        <AppText type="caption" style={[styles.link]} onPress={() => openLink(validator.website)}>{validator.website}</AppText>
+
+            <ScrollView>
+                {/* Header Card */}
+                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                    <AppView style={[styles.headerRow, { backgroundColor: cardBg }]}>
+                        <Image source={{ uri: validator.avatar_url }} style={styles.avatar} />
+                        <AppCardView style={styles.headerInfo}>
+                            <AppText type="medium" style={styles.name}>{validator.name}</AppText>
+                            <AppText
+                                type="small"
+                                style={styles.link}
+                                onPress={() => openLink(validator.website)}
+                            >
+                                {validator.website}
+                            </AppText>
+                        </AppCardView>
                     </AppView>
                 </AppView>
-            </AppView>
 
-            {/* Stats - simple stacked */}
-            <AppView style={styles.section}>
-                <Field label="Estimated APR" value={`${validator.apr.toFixed(2)}%`} />
-                <Field label="Commission" value={`${validator.commission}%`} />
-                <Field label="Jito MEV" value={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'} />
-                <Field label="Active stake" value={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`} />
-            </AppView>
+                {/* Performance Stats Card */}
+                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                    <AppText type="body" style={styles.sectionTitle}>Performance</AppText>
+                    <AppCardView style={styles.statsGrid}>
+                        <StatCard
+                            label="Estimated APR"
+                            value={`${validator.apr.toFixed(2)}%`}
+                            highlight
+                        />
+                        <StatCard
+                            label="Commission"
+                            value={`${validator.commission}%`}
+                        />
+                        <StatCard
+                            label="Jito MEV"
+                            value={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}
+                        />
+                        <StatCard
+                            label="Active Stake"
+                            value={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`}
+                        />
+                    </AppCardView>
+                </AppView>
 
-            {/* Details Section */}
-            <AppView style={styles.section}>
-                <Field label="Details" value={validator.details || '—'} />
-                <Field label="Stake pools" value={validator.stake_pools_list?.join(', ') || '—'} />
-                <Field label="Software client" value={validator.software_client} />
-                <Field label="Software version" value={validator.software_version} />
-            </AppView>
+                {/* Details Card */}
+                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                    <AppText type="body" style={styles.sectionTitle}>Details</AppText>
+                    <AppCardView style={styles.detailsContainer}>
+                        <DetailField label="About" value={validator.details || '—'} />
+                        <DetailField label="Stake Pools" value={validator.stake_pools_list?.join(', ') || '—'} />
+                        <DetailField label="Software Client" value={validator.software_client} />
+                        <DetailField label="Software Version" value={validator.software_version} />
+                    </AppCardView>
+                </AppView>
+            </ScrollView>
         </AppPage>
     )
 }
 
-const Field = ({ label, value }: { label: string; value: string }) => {
-    const text = useThemeColor({}, 'text');
-    return (
-        <AppView style={styles.field}>
-            <AppText type="caption" style={[{ color: text }]}>{label}</AppText>
-            <AppText type="label">{value}</AppText>
-        </AppView>
-    )
-}
+
+
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        gap: 16,
-        marginBottom: 12,
+    card: {
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 16,
+        borderWidth: 1,
     },
     headerRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: 16,
     },
     avatar: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        width: 64,
+        height: 64,
+        borderRadius: 32,
     },
     headerInfo: {
         flex: 1,
+        gap: 6,
     },
     name: {
+        marginBottom: 2,
     },
     link: {
-        color: '#00BFFF'
+        color: '#00BFFF',
+        opacity: 0.9,
     },
-    section: {
-        gap: 10,
-        marginTop: 12,
+    sectionTitle: {
+        marginBottom: 16,
+        opacity: 0.6,
+        fontSize: 13,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
-    field: {
-        gap: 4,
+    statsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 12,
     },
-});
+    detailsContainer: {
+        gap: 20,
+    },
 
+});
 
 export default ValidatorDetails
