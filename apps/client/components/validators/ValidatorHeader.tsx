@@ -1,31 +1,30 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native'
 import { AppView } from '@/components/app-view'
 import { AppText } from '@/components/app-text'
 import { Image } from 'expo-image'
+import { StyleSheet } from 'react-native'
 import { useThemeColor } from '@/hooks/use-theme-color'
+import { AppCardView } from '../app-card-view'
 
-type ValidatorHeaderProps = {
-    name: string
-    website: string
-    avatarUrl: string
-    onPressWebsite?: () => void
+export type ValidatorHeaderProps = {
+    name: string;
+    website: string;
+    avatarUrl: string;
+    onOpenLink: (url: string) => void;
 }
 
-const ValidatorHeader: React.FC<ValidatorHeaderProps> = ({ name, website, avatarUrl, onPressWebsite }) => {
-    const linkColor = '#00BFFF'
+const ValidatorHeader: React.FC<ValidatorHeaderProps> = ({ name, website, avatarUrl, onOpenLink }) => {
+    const linkColor = useThemeColor({}, 'text');
     return (
-        <AppView style={styles.headerRow}>
+        <AppCardView style={styles.headerRow}>
             <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-            <AppView style={styles.headerInfo}>
+            <AppCardView style={styles.headerInfo}>
                 <AppText type="medium" style={styles.name}>{name}</AppText>
-                <TouchableOpacity onPress={onPressWebsite}>
-                    <AppText type="small" style={[styles.link, { color: linkColor }]} >
-                        {website}
-                    </AppText>
-                </TouchableOpacity>
-            </AppView>
-        </AppView>
+                <AppText type="small" style={[styles.link, { color: linkColor }]} onPress={() => onOpenLink(website)}>
+                    {website}
+                </AppText>
+            </AppCardView>
+        </AppCardView>
     )
 }
 
@@ -53,5 +52,4 @@ const styles = StyleSheet.create({
 })
 
 export default ValidatorHeader
-
 

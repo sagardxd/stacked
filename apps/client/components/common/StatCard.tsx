@@ -16,6 +16,7 @@ const StatCard = ({ label, value, highlight }: { label: string; value: string; h
 }
 
 const styles = StyleSheet.create({
+
     statCard: {
         flex: 1,
         minWidth: '47%',

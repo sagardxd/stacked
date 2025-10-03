@@ -6,6 +6,7 @@ const MAPPING = {
   search: 'search',
   home: 'home-outline',
   wallet: 'wallet-outline',
+  lock: 'lock-closed-outline'
 } as const
 
 export type UiIconSymbolName = keyof typeof MAPPING

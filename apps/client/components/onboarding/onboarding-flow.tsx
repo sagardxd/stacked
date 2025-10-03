@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, StyleSheet } from 'react-native'
-import { OnboardingButton } from './onboarding-button'
+import { AppButton } from './app-button'
 import { WelcomeContent } from './welcome-content'
 import { StoryComponent } from './story-component'
 import { useAuth } from '../auth/auth-provider'
@@ -45,7 +45,7 @@ export function OnboardingFlow() {
     if (currentScreen === 'welcome') {
       return (
         <View style={styles.actionContainer}>
-          <OnboardingButton title="Continue" onPress={handleContinue} />
+          <AppButton title="Continue" onPress={handleContinue} />
         </View>
       )
     }

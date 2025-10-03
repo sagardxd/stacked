@@ -12,7 +12,7 @@ interface AppBackBtnProps {
 const AppBackBtn: React.FC<AppBackBtnProps> = ({ onPress, title }) => {
     return (
         <AppView style={styles.container}>
-            <TouchableOpacity onPress={onPress}>
+            <TouchableOpacity onPress={onPress} style={styles.imageContainer}>
                 <Image source={require('@/assets/images/icons/back.png')} style={styles.backImage} />
             </TouchableOpacity>
             {title && <AppText type='label'>{title}</AppText>}
@@ -25,12 +25,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        marginTop: 5,
-        marginLeft: 5
+        marginTop: 10,
+        marginLeft: 7
     },
+    imageContainer: {
+        width: 30,
+        height: 30,
+    },
+
     backImage: {
-        width: 18,
-        height: 18
+        width: 25,
+        height: 25
     }
 })
 

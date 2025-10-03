@@ -1,43 +1,25 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
 import { AppView } from '@/components/app-view'
-import { AppText } from '@/components/app-text'
-import { useThemeColor } from '@/hooks/use-theme-color'
+import StatCard from '@/components/common/StatCard'
+import { AppCardView } from '../app-card-view';
 
-type ValidatorStatsProps = {
-    apr: number
-    commission: number
-    jitoEnabled: boolean
-    jitoCommission: number
-    activeStake: string
+export type ValidatorStatsProps = {
+    aprPercent: string;
+    commissionPercent: string;
+    jitoText: string;
+    activeStakeText: string;
 }
 
-const ValidatorStats: React.FC<ValidatorStatsProps> = ({ apr, commission, jitoEnabled, jitoCommission, activeStake }) => {
-    const text = useThemeColor({}, 'text')
+const ValidatorStats: React.FC<ValidatorStatsProps> = ({ aprPercent, commissionPercent, jitoText, activeStakeText }) => {
     return (
-        <AppView style={styles.container}>
-            <AppText type="caption" style={{ color: text }}>Estimated APR</AppText>
-            <AppText type="label">{apr.toFixed(2)}%</AppText>
-
-            <AppText type="caption" style={{ color: text }}>Commission</AppText>
-            <AppText type="label">{commission}%</AppText>
-
-            <AppText type="caption" style={{ color: text }}>Jito MEV</AppText>
-            <AppText type="label">{jitoEnabled ? `${jitoCommission}%` : 'Disabled'}</AppText>
-
-            <AppText type="caption" style={{ color: text }}>Active Stake</AppText>
-            <AppText type="label">{activeStake}</AppText>
-        </AppView>
+        <AppCardView style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+            <StatCard label="Estimated APR" value={aprPercent} highlight />
+            <StatCard label="Commission" value={commissionPercent} />
+            <StatCard label="Jito MEV" value={jitoText} />
+            <StatCard label="Active Stake" value={activeStakeText} />
+        </AppCardView>
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        gap: 10,
-        marginTop: 12,
-    },
-})
-
 export default ValidatorStats
-
 

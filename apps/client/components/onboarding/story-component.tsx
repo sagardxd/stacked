@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { AppText } from '@/components/app-text'
 import { useThemeColor } from '@/hooks/use-theme-color'
-import { OnboardingButton } from './onboarding-button'
+import { AppButton } from './app-button'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 
@@ -233,7 +233,7 @@ export function StoryComponent({ onClose, onComplete }: StoryComponentProps) {
         {/* Wallet Connect Button - Only on last story */}
         {currentIndex === storyData.length - 1 && (
           <View style={styles.buttonContainer}>
-            <OnboardingButton title="Connect Wallet" onPress={handleConnectWallet} />
+            <AppButton title="Connect Wallet" onPress={handleConnectWallet} />
           </View>
         )}
       </View>

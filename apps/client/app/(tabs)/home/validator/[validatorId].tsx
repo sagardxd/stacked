@@ -5,13 +5,13 @@ import { AppText } from '@/components/app-text';
 import { ValidatorDetails as ValidatorDetailsType } from '@/types/validator.types';
 import { AppView } from '@/components/app-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Image } from 'expo-image';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
-import { Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet } from 'react-native';
 import AppBackBtn from '@/components/app-back-button';
-import { AppCardView } from '@/components/app-card-view';
-import DetailField from '@/components/common/DetailField';
-import StatCard from '@/components/common/StatCard';
+import ValidatorHeader from '@/components/validators/ValidatorHeader';
+import ValidatorStats from '@/components/validators/ValidatorStats';
+import ValidatorDetailsSection from '@/components/validators/ValidatorDetailsSection';
+import { AppButton } from '@/components/onboarding';
 
 const ValidatorDetails = () => {
     const { validatorId } = useLocalSearchParams<{ validatorId: string }>();
@@ -40,49 +40,51 @@ const ValidatorDetails = () => {
     };
 
     return (
-        <AppPage>
-            <AppBackBtn onPress={() => router.back()} />
+        <AppView style={{flex: 1}}>
+            <AppPage>
+                <AppBackBtn onPress={() => router.back()} />
 
-            <ScrollView>
-                {/* Header Card */}
-                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                    <AppView style={[styles.headerRow, { backgroundColor: cardBg }]}>
-                        <Image source={{ uri: validator.avatar_url }} style={styles.avatar} />
-                        <AppCardView style={styles.headerInfo}>
-                            <AppText type="medium" style={styles.name}>{validator.name}</AppText>
-                            <AppText
-                                type="small"
-                                style={styles.link}
-                                onPress={() => openLink(validator.website)}
-                            >
-                                {validator.website}
-                            </AppText>
-                        </AppCardView>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {/* Header Card */}
+                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                        <ValidatorHeader
+                            name={validator.name}
+                            website={validator.website}
+                            avatarUrl={validator.avatar_url}
+                            onOpenLink={openLink}
+                        />
                     </AppView>
-                </AppView>
 
-                {/* Performance Stats Card */}
-                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                    <AppText type="small" style={styles.sectionTitle}>Statistics</AppText>
-                    <AppCardView style={styles.statsGrid}>
-                        <StatCard label="Estimated APR" value={`${validator.apr.toFixed(2)}%`} />
-                        <StatCard label="Commission" value={`${validator.commission}%`} />
-                        <StatCard label="Jito MEV" value={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'} />
-                        <StatCard label="Active Stake" value={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`} />
-                    </AppCardView>
-                </AppView>
+                    {/* Statistics Card */}
+                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                        <AppText type="small" style={styles.sectionTitle}>Statistics</AppText>
+                        <ValidatorStats
+                            aprPercent={`${validator.apr.toFixed(2)}%`}
+                            commissionPercent={`${validator.commission}%`}
+                            jitoText={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}
+                            activeStakeText={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`}
+                        />
+                    </AppView>
 
-                {/* Details Card */}
-                <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                    <AppText type="small" style={styles.sectionTitle}>Details</AppText>
-                    <AppCardView style={styles.detailsContainer}>
-                        <DetailField label="About" value={validator.details || '—'} />
-                        <DetailField label="Stake Pools" value={validator.stake_pools_list?.join(', ') || '—'} />
-                        <DetailField label="Software Client" value={validator.software_client} />
-                    </AppCardView>
-                </AppView>
-            </ScrollView>
-        </AppPage>
+                    {/* Details Card */}
+                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                        <AppText type="small" style={styles.sectionTitle}>Details</AppText>
+                        <ValidatorDetailsSection
+                            about={validator.details || '—'}
+                            stakePools={validator.stake_pools_list?.join(', ') || '—'}
+                            softwareClient={validator.software_client}
+                        />
+                    </AppView>
+
+
+                </ScrollView>
+            </AppPage>
+            {/* Actions */}
+            <AppView style={styles.buttonContainer}>
+                <AppButton title='Start SIP' onPress={() => { }} type='secondary' iconName='lock'/>
+                <AppButton title='Lock Assets' onPress={() => { }} type='secondary' />
+            </AppView>
+        </AppView>
     )
 }
 
@@ -131,6 +133,17 @@ const styles = StyleSheet.create({
     detailsContainer: {
         gap: 20,
     },
+    buttonContainer: {
+        // backgroundColor: '#3C3D37',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingTop: 12,
+        bottom: 0,
+        paddingBottom: 30,
+        flexDirection: 'row',
+        gap: 10,
+        paddingHorizontal: 16
+    }
 
 });
 

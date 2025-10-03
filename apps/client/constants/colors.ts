@@ -11,7 +11,9 @@ export const Colors = {
     text: '#11181C',
     tint: lightLavender,
     accent: lightLavender,
-    cardBg: '#141414cc'
+    cardBg: '#141414cc',
+    buttonSecondaryBg: '#22252B',
+    buttonSecondaryBorder: '#30343A'
   },
   dark: {
     background: darkBackground,
@@ -22,6 +24,8 @@ export const Colors = {
     text: '#E0E0E0',
     tint: lightLavender,
     accent: lightLavender,
-    cardBg: '#141414cc'
+    cardBg: '#141414cc',
+    buttonSecondaryBg: '#6161D6',
+    buttonSecondaryBorder: '#2B2F36'
   },
 }
