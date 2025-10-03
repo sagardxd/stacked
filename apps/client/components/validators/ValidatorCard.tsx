@@ -8,10 +8,9 @@ import { Image } from 'expo-image'
 import { lamportsToSol } from '@/utils/lamports-to-sol'
 import { getColors } from '@/utils/get-image-dominant-color'
 
-
 interface ValidatorCardProps {
     validator: Validator
-    onPress: () => void
+    onPress: (id: string) => void
 }
 
 const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => {
@@ -30,7 +29,7 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
         <AppView style={styles.cardcontainer}>
             <Pressable
                 style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}
-                onPress={onPress}
+                onPress={() => onPress(validator.id)}
                 android_ripple={{ color: border }}>
                 {/* Top Section */}
                 <View style={styles.topSection}>
@@ -70,15 +69,14 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
 
 const styles = StyleSheet.create({
     cardcontainer: {
-        borderRadius: 26,
+        borderRadius: 20,
         overflow: 'hidden',
     },
     card: {
         borderRadius: 16,
         padding: 20,
-        marginVertical: 8,
+        marginVertical: 4,
         borderWidth: 1,
-        overflow: 'hidden',
     },
     topSection: {
         flexDirection: 'row',

@@ -5,8 +5,6 @@ export const getColors = async (url: string) => {
         fallback: '#000000',
     })
 
-    console.log(result)
-
     switch (result.platform) {
         case 'android':
             return result.dominant

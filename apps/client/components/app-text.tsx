@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   medium: {
     fontSize: 22,
-    lineHeight: 36,
+    lineHeight: 28,
     fontFamily: 'SkModernistBold',
     letterSpacing: -0.2,
   },

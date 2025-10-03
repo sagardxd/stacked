@@ -56,18 +56,19 @@ const Home = () => {
         <AppPage>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <AssetHeader asset={Asset.SOL} />
-                <View style={styles.chartContainer}>
+                <View style={styles.container}>
                     <Graph />
+                    <ValidatorList />
                 </View>
-                <ValidatorList />
             </ScrollView>
         </AppPage>
     )
 }
 
 const styles = StyleSheet.create({
-    chartContainer: {
-        borderRadius: 28,
+    container: {
+        gap: 20,
+        paddingBottom: 50
     }
 })
 

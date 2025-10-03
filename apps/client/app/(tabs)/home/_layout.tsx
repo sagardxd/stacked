@@ -8,6 +8,13 @@ export default function Layout() {
     // screenOptions={{ headerTitle: '', headerRight: () => <WalletUiDropdown /> }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen 
+        name="[id]" 
+        options={{
+          headerShown: true,
+          headerTitle: 'Validator Detail',
+        }}
+      />
     </Stack>
   )
 }

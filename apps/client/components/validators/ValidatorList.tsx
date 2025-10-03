@@ -1,8 +1,8 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { AppView } from '../app-view'
 import { Validator } from '@/types/validator.types'
 import ValidatorCard from './ValidatorCard'
+import { useRouter } from 'expo-router'
 
 const Validators: Validator[] = [
     {
@@ -34,10 +34,16 @@ const Validators: Validator[] = [
 
 
 const ValidatorList = () => {
+    const router = useRouter();
+
+    const handleOnPress = (id: string) => {
+        router.push(`/(tabs)/home/validator/${id}`)
+    }
+
     return (
         <AppView>
             {Validators.map((validator) => (
-                <ValidatorCard key={validator.id} validator={validator} onPress={()=> {}} />
+                <ValidatorCard key={validator.id} validator={validator} onPress={handleOnPress} />
             ))}
         </AppView>
     )
