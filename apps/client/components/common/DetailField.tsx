@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
     detailValue: {
-        opacity: 0.9,
+        opacity: 1,
     },
 })
 

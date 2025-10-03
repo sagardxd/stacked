@@ -14,7 +14,7 @@ import DetailField from '@/components/common/DetailField';
 import StatCard from '@/components/common/StatCard';
 
 const ValidatorDetails = () => {
-    const { id } = useLocalSearchParams<{ id: string }>();
+    const { validatorId } = useLocalSearchParams<{ validatorId: string }>();
     const router = useRouter();
     const cardBg = useThemeColor({}, 'cardBg');
     const border = useThemeColor({}, 'border');
@@ -33,7 +33,6 @@ const ValidatorDetails = () => {
         details: 'High-performance validator with strong uptime and community presence.',
         stake_pools_list: ['Jito', 'Marinade', 'JPool'],
         software_client: 'Agave',
-        software_version: '2.1.4',
     }), []);
 
     const openLink = (url: string) => {
@@ -64,36 +63,22 @@ const ValidatorDetails = () => {
 
                 {/* Performance Stats Card */}
                 <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                    <AppText type="body" style={styles.sectionTitle}>Performance</AppText>
+                    <AppText type="small" style={styles.sectionTitle}>Statistics</AppText>
                     <AppCardView style={styles.statsGrid}>
-                        <StatCard
-                            label="Estimated APR"
-                            value={`${validator.apr.toFixed(2)}%`}
-                            highlight
-                        />
-                        <StatCard
-                            label="Commission"
-                            value={`${validator.commission}%`}
-                        />
-                        <StatCard
-                            label="Jito MEV"
-                            value={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}
-                        />
-                        <StatCard
-                            label="Active Stake"
-                            value={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`}
-                        />
+                        <StatCard label="Estimated APR" value={`${validator.apr.toFixed(2)}%`} />
+                        <StatCard label="Commission" value={`${validator.commission}%`} />
+                        <StatCard label="Jito MEV" value={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'} />
+                        <StatCard label="Active Stake" value={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`} />
                     </AppCardView>
                 </AppView>
 
                 {/* Details Card */}
                 <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                    <AppText type="body" style={styles.sectionTitle}>Details</AppText>
+                    <AppText type="small" style={styles.sectionTitle}>Details</AppText>
                     <AppCardView style={styles.detailsContainer}>
                         <DetailField label="About" value={validator.details || '—'} />
                         <DetailField label="Stake Pools" value={validator.stake_pools_list?.join(', ') || '—'} />
                         <DetailField label="Software Client" value={validator.software_client} />
-                        <DetailField label="Software Version" value={validator.software_version} />
                     </AppCardView>
                 </AppView>
             </ScrollView>
@@ -135,7 +120,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         marginBottom: 16,
         opacity: 0.6,
-        fontSize: 13,
         textTransform: 'uppercase',
         letterSpacing: 1,
     },

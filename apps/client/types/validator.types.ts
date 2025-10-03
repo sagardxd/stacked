@@ -15,5 +15,4 @@ export interface ValidatorDetails extends Validator {
     details?: string;        
     stake_pools_list?: string[];
     software_client: string;
-    software_version: string;
   }
