@@ -21,8 +21,8 @@ export default function RootLayout() {
   })
   const [loaded] = useFonts({
     SkModernistMono: require('../assets/fonts/Sk-Modernist-Mono.otf'),
-    SkModernistBold: require('../assets/fonts/Sk-Modernist-Bold.otf'),
     SkModernistRegular: require('../assets/fonts/Sk-Modernist-Regular.otf'),
+    SkModernistBold: require('../assets/fonts/Sk-Modernist-Bold.otf'),
   })
 
   const onLayoutRootView = useCallback(async () => {

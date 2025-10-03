@@ -45,7 +45,7 @@ export function AppButton({
         <ActivityIndicator />
         :
         <View style={styles.buttonTextContainer}>
-          <AppText style={[
+          <AppText type='body' style={[
             styles.buttonText,
             disabled && styles.disabledButtonText
           ]}>
@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'SkModernistBold',
-    fontSize: 18,
     color: '#fff',
     textAlign: 'center',
   },

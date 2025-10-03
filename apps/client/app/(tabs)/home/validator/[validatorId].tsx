@@ -81,8 +81,8 @@ const ValidatorDetails = () => {
             </AppPage>
             {/* Actions */}
             <AppView style={styles.buttonContainer}>
-                <AppButton title='Start SIP' onPress={() => { }} type='secondary' iconName='lock'/>
-                <AppButton title='Lock Assets' onPress={() => { }} type='secondary' />
+                <AppButton title='Start SIP' onPress={() => router.push('/(tabs)/home/sip')} type='secondary' />
+                <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' />
             </AppView>
         </AppView>
     )
