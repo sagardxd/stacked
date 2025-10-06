@@ -81,8 +81,8 @@ const ValidatorDetails = () => {
             </AppPage>
             {/* Actions */}
             <AppView style={styles.buttonContainer}>
-                <AppButton title='Start SIP' onPress={() => router.push('/(tabs)/home/sip')} type='secondary' />
-                <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' />
+                <AppButton title='Start SIP' onPress={() => router.push('/(tabs)/home/sip')} type='secondary' buttonStyle={{flex: 1}} />
+                <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{flex: 1}}/>
             </AppView>
         </AppView>
     )
@@ -134,14 +134,12 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     buttonContainer: {
-        // backgroundColor: '#3C3D37',
+        flexDirection: 'row',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingTop: 12,
         bottom: 0,
         paddingBottom: 30,
-        flexDirection: 'row',
-        gap: 10,
         paddingHorizontal: 16
     }
 

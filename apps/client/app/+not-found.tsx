@@ -13,7 +13,7 @@ export default function NotFoundScreen() {
         <AppText type="heading" style={{ textAlign: 'center' }}>
           This screen does not exist.
         </AppText>
-        <Link href="/" style={styles.link}>
+        <Link href="/(tabs)/home" style={styles.link}>
           <AppText type="body">Go to home screen!</AppText>
         </Link>
       </AppView>

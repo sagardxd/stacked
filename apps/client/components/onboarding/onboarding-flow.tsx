@@ -22,7 +22,7 @@ export function OnboardingFlow() {
 
   const connectWallet = async() => {
       await signIn();
-      router.replace('/')
+      router.replace('/(tabs)/home')
   }
 
   const renderContent = () => {
@@ -45,7 +45,7 @@ export function OnboardingFlow() {
     if (currentScreen === 'welcome') {
       return (
         <View style={styles.actionContainer}>
-          <AppButton title="Continue" onPress={handleContinue} />
+          <AppButton title="Continue" onPress={handleContinue} type='primary' />
         </View>
       )
     }

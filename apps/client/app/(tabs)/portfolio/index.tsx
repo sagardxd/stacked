@@ -17,14 +17,14 @@ const Portfolio = () => {
 
   return (
     <AppPage>
-      <AppText type='medium' >Portfolio</AppText>
+      <AppText type='medium' style={styles.header}>Portfolio</AppText>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
+        <UserBalance balance={3000} />
         <AppView style={styles.balanceRingContainer}>
-          <UserBalance balance={10000} />
           <BalanceRing
             size={300}
             strokeWidth={19}
@@ -46,6 +46,12 @@ const Portfolio = () => {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    paddingTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center'
+  },
   balanceRingContainer: {
     alignItems: 'center',
     padding: 10,

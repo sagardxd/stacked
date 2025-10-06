@@ -4,7 +4,7 @@ import { useThemeColor } from '@/hooks/use-theme-color'
 export type AppTextProps = TextProps & {
   lightColor?: string
   darkColor?: string
-  type?: 'heading' | 'subheading' | 'caption' | 'small' | 'medium' | 'body' | 'label'
+  type?: 'heading' | 'subheading' | 'caption' | 'small' | 'medium' | 'body' | 'button' | 'label'
 }
 
 export function AppText({ style, lightColor, darkColor, type = 'label', ...rest }: AppTextProps) {
@@ -19,6 +19,7 @@ export function AppText({ style, lightColor, darkColor, type = 'label', ...rest 
         type === 'caption' ? styles.caption : undefined,
         type === 'small' ? styles.small : undefined,
         type === 'medium' ? styles.medium : undefined,
+        type === 'button' ? styles.button : undefined,
         type === 'body' ? styles.body : undefined,
         type === 'label' ? styles.label : undefined,
         style,
@@ -46,6 +47,12 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     fontFamily: 'SkModernistBold',
     letterSpacing: -0.2,
+  },
+  button: {
+    fontSize: 18,
+    lineHeight: 24,
+    fontFamily: 'SkModernistBold',
+    letterSpacing: 0,
   },
   body: {
     fontSize: 16,

@@ -189,7 +189,7 @@ export const BalanceRing: React.FC<RingProps> = ({
                                         color={seg.color}
                                         opacity={isSelected ? 1 : 0.85}
                                     >
-                                        <BlurMask blur={isSelected ? 2 : 1} style="solid" />
+                                        <BlurMask blur={isSelected ? 4 : 2} style="solid" />
                                     </Path>
                                 );
                                 currentStart += sweep;

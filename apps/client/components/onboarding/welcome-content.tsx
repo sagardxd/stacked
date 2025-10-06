@@ -11,10 +11,10 @@ export function WelcomeContent() {
       <ImageBackground source={require('@/assets/images/background/bg.png')} style={StyleSheet.absoluteFillObject} />
       <View style={styles.content}>
         <View>
-          {/* <Image source={require("../../assets/images/background/card.png")}
+          <AppText type="heading" style={styles.heading}>Stacked</AppText>
+          <Image source={require("../../assets/images/background/card.png")}
             style={{ width: 320, height: 320 }}
-          /> */}
-          {/* <AppText type="heading" style={styles.heading}>stacked</AppText> */}
+          />
         </View>
 
         <View style={styles.textContainer}>
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     gap: 4
   },
   heading: {
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 50
   }
 })

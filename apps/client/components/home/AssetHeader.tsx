@@ -17,14 +17,16 @@ const AssetHeader: React.FC<AssetHeaderProps> = ({ asset }) => {
                 <AssetImage asset={asset} />
                 <AppText type='medium'>Solana</AppText>
             </View>
-            <AssetPrice asset={asset} />
+            <AppView style={styles.assetPriceContainer}>
+                <AssetPrice asset={asset} />
+            </AppView>
         </AppView>
     )
 }
     
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingTop: 10
+        paddingTop: 10,
     },
     labelContainer: {
         flexDirection: 'row',
@@ -32,6 +34,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    assetPriceContainer: {
+        paddingVertical: 10
+    }
 
 })
 

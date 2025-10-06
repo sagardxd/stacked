@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableOpacity, StyleSheet, ActivityIndicator, View } from 'react-native'
+import { TouchableOpacity, StyleSheet, ActivityIndicator, View, StyleProp, StyleSheetProperties, ViewStyle } from 'react-native'
 import { AppText } from '@/components/app-text'
 import { useThemeColor } from '@/hooks/use-theme-color'
 import { UiIconSymbol, UiIconSymbolName } from '../ui/ui-icon-symbol'
@@ -8,18 +8,19 @@ interface AppButtonProps {
   title: string
   onPress: () => void
   type: 'primary' | 'secondary'
+  buttonStyle?: ViewStyle
   iconName?: UiIconSymbolName
   loading?: boolean
   disabled?: boolean
-
 }
 
 export function AppButton({
   title,
   onPress,
   type,
+  buttonStyle,
   iconName,
-  loading,
+  loading = false,
   disabled = false
 }: AppButtonProps) {
   const accentColor = useThemeColor({}, 'accent')
@@ -35,6 +36,7 @@ export function AppButton({
           borderColor: type === 'secondary' ? secondaryBorder : 'transparent',
           borderWidth: type === 'secondary' ? 1 : 0,
         },
+        buttonStyle,
         disabled && styles.disabledButton
       ]}
       onPress={onPress}
@@ -44,8 +46,8 @@ export function AppButton({
       {loading ?
         <ActivityIndicator />
         :
-        <View style={styles.buttonTextContainer}>
-          <AppText type='body' style={[
+        <View style={[styles.buttonTextContainer]}>
+          <AppText type='button' style={[
             styles.buttonText,
             disabled && styles.disabledButtonText
           ]}>
@@ -66,7 +68,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 120,
-    flex: 1,
   },
   disabledButton: {
     opacity: 0.5,
@@ -76,8 +77,6 @@ const styles = StyleSheet.create({
     gap: 2
   },
   buttonText: {
-    fontFamily: 'SkModernistBold',
-    color: '#fff',
     textAlign: 'center',
   },
   disabledButtonText: {

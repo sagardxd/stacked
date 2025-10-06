@@ -4,12 +4,13 @@ import { UiIconSymbol } from '@/components/ui/ui-icon-symbol'
 
 export default function TabLayout() {
   const pathname = usePathname()
-  
+
   // Hide tab bar on any sub-routes
   const shouldHideTabs = pathname.split('/').length > 2
   return (
-    <Tabs screenOptions={{ headerShown: false ,
-      tabBarStyle : shouldHideTabs ? {display: 'none'} : undefined
+    <Tabs screenOptions={{
+      headerShown: false,
+      tabBarStyle: shouldHideTabs ? { display: 'none' } : undefined
     }}>
       <Tabs.Screen
         name="home"
@@ -18,13 +19,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="home" color={color} />,
         }}
       />
-        <Tabs.Screen
-          name="portfolio"
-          options={{
-            title: 'Portfolio',
-            tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="wallet" color={color} />,
-          }}
-        /> 
+      <Tabs.Screen
+        name="portfolio"
+        options={{
+          title: 'Portfolio',
+          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="wallet" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="settings" color={color} />,
+        }}
+      />
     </Tabs>
   )
 }
