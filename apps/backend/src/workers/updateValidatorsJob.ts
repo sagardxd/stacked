@@ -25,6 +25,8 @@ export async function updateValidatorsInfo() {
         where: { voteAccountPubkey: validator.vote_account },
         update: {
             name: validator.name,
+            network: validator.network,
+            details: validator.details,
             website: validator.www_url,
             logoUrl: validator.avatar_url,
             activeStakeLamports: validator.active_stake,
@@ -34,6 +36,8 @@ export async function updateValidatorsInfo() {
         },
         create: {
             voteAccountPubkey: validator.vote_account,
+            network: validator.network,
+            details: validator.details,
             name: validator.name,
             website: validator.www_url,
             logoUrl: validator.avatar_url,

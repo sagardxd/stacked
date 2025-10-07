@@ -31,6 +31,8 @@ model User {
 
 model Validator {
   id                String  @id @default(cuid())
+  network           String
+  details           String?
   name              String
   logoUrl           String?
   website           String?
