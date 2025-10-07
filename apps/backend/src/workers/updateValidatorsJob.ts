@@ -9,9 +9,6 @@ const VALIDATOR_VOTEACCOUNTS = [
 ];
 export async function updateValidatorsInfo() {
   try {
-    console.log(config.VALIDATOR_API_URL);
-    for (const va of VALIDATOR_VOTEACCOUNTS) {
-    }
     const res = await axios.get(`${config.VALIDATOR_API_URL!}`, {
       headers: {
         Token: config.VALIDATOR_TOKEN!,

@@ -33,8 +33,13 @@ export async function getValidatorById(req: Request, res: Response) {
       },
     });
 
-    if (!validator)
-      return res.status(404).json({ error: "Validator not found" });
+    if (!validator) {
+      const response: ApiResponse<null> = {
+        success: false,
+        message: "Validator not found",
+      };
+      return res.status(404).json(response);
+    }
     const sanitizedValidator = {
       ...validator,
       activeStakeLamports: BigInt(validator.activeStakeLamports).toString(),
