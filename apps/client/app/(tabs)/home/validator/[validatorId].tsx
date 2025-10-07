@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppPage } from '@/components/app-page';
 import { AppText } from '@/components/app-text';
@@ -12,12 +12,16 @@ import ValidatorHeader from '@/components/validators/ValidatorHeader';
 import ValidatorStats from '@/components/validators/ValidatorStats';
 import ValidatorDetailsSection from '@/components/validators/ValidatorDetailsSection';
 import { AppButton } from '@/components/onboarding';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import LockSheet from '@/components/home/LockSheet';
 
 const ValidatorDetails = () => {
     const { validatorId } = useLocalSearchParams<{ validatorId: string }>();
     const router = useRouter();
     const cardBg = useThemeColor({}, 'cardBg');
     const border = useThemeColor({}, 'border');
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
 
     const validator = useMemo<ValidatorDetailsType>(() => ({
         id: 'xLabscif2DLnYg39rQThqi7A9E45L9qiysRZhmZ1ARE',
@@ -39,7 +43,13 @@ const ValidatorDetails = () => {
         Linking.openURL(url).catch((err: any) => console.log("Couldn't load page", err));
     };
 
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+
+
     return (
+        <BottomSheetModalProvider>
         <AppView style={{flex: 1}}>
             <AppPage>
                 <AppBackBtn onPress={() => router.back()} />
@@ -81,10 +91,11 @@ const ValidatorDetails = () => {
             </AppPage>
             {/* Actions */}
             <AppView style={styles.buttonContainer}>
-                {/* <AppButton title='Start SIP' onPress={() => router.push('/(tabs)/home/sip')} type='secondary' buttonStyle={{flex: 1}} /> */}
-                <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{flex: 1}}/>
+                <AppButton title='Lock Assets' onPress={handlePresentModalPress} type='secondary' buttonStyle={{flex: 1}}/>
             </AppView>
+            <LockSheet ref={bottomSheetModalRef} />
         </AppView>
+        </BottomSheetModalProvider>
     )
 }
 

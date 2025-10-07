@@ -7,10 +7,12 @@ export function AppDropdown({
   items,
   selectedItem,
   selectItem,
+  minwidth,
 }: {
   items: readonly string[]
   selectedItem: string
-  selectItem: (item: string) => void
+  selectItem: (item: string) => void,
+  minwidth?: number
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -20,12 +22,12 @@ export function AppDropdown({
   const textColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'text')
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container, { backgroundColor , minWidth: minwidth}]}>
       <TouchableOpacity style={[styles.header, { backgroundColor, borderColor }]} onPress={() => setIsOpen(!isOpen)}>
         <Text style={{ color: textColor }}>{selectedItem}</Text>
       </TouchableOpacity>
       {isOpen && (
-        <View style={[styles.list, { backgroundColor: listBackgroundColor, borderColor }]}>
+        <View style={[styles.list, { backgroundColor: listBackgroundColor, borderColor , minWidth: minwidth}]}>
           {items.map((option, index) => (
             <TouchableOpacity
               key={index}
@@ -49,6 +51,7 @@ const styles = StyleSheet.create({
     width: 'auto',
     borderRadius: 5,
     position: 'relative',
+    alignItems: 'center'
   },
   header: {
     padding: 10,
