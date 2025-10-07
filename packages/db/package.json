@@ -1,6 +1,6 @@
 {
-  "name": "db",
-  "module": "index.ts",
+  "name": "@repo/db",
+  "main": "index.ts",
   "version": "0.1.0",
   "type": "module",
   "private": true,

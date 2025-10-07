@@ -17,7 +17,7 @@ datasource db {
 model User {
   id           String  @id @default(cuid())
   email        String? @unique
-  username     String?
+  username     String? @unique
   walletPubkey String  @unique
 
   createdAt    DateTime   @default(now())
@@ -25,16 +25,20 @@ model User {
   Position     Position[]
   Listing      Listing[]
   ListingBuyer Listing[]  @relation("ListingBuyer")
+
+  @@index([walletPubkey])
 }
 
 model Validator {
   id                String  @id @default(cuid())
+  network           String
+  details           String?
   name              String
   logoUrl           String?
   website           String?
   voteAccountPubkey String  @unique
-  commission        Int
-  activeStakeLampts BigInt
+  commission        Float
+  activeStakeLamports BigInt
   apr               Float
   aprUpdateAt       DateTime?
   
@@ -59,6 +63,7 @@ model Position {
   activeAt     DateTime?
   closeAt      DateTime?
   transferable Boolean        @default(false)
+  lockedUntil  DateTime?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

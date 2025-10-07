@@ -23,8 +23,8 @@ CREATE TABLE "Validator" (
     "logoUrl" TEXT,
     "website" TEXT,
     "voteAccountPubkey" TEXT NOT NULL,
-    "commission" INTEGER NOT NULL,
-    "activeStakeLampts" BIGINT NOT NULL,
+    "commission" DOUBLE PRECISION NOT NULL,
+    "activeStakeLamports" BIGINT NOT NULL,
     "apr" DOUBLE PRECISION NOT NULL,
     "aprUpdateAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -46,6 +46,7 @@ CREATE TABLE "Position" (
     "activeAt" TIMESTAMP(3),
     "closeAt" TIMESTAMP(3),
     "transferable" BOOLEAN NOT NULL DEFAULT false,
+    "lockedUntil" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -70,7 +71,13 @@ CREATE TABLE "Listing" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_walletPubkey_key" ON "User"("walletPubkey");
+
+-- CreateIndex
+CREATE INDEX "User_walletPubkey_idx" ON "User"("walletPubkey");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Validator_voteAccountPubkey_key" ON "Validator"("voteAccountPubkey");
