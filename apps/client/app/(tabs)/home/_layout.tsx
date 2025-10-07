@@ -4,8 +4,8 @@ import { Stack } from 'expo-router'
 export default function Layout() {
   return (
     <Stack 
-    // screenOptions={{headerShown: false}}
-    screenOptions={{ headerTitle: '', headerRight: () => <WalletUiDropdown /> }}
+    screenOptions={{headerShown: false}}
+    // screenOptions={{ headerTitle: '', headerRight: () => <WalletUiDropdown /> }}
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="[validatorId]" />
