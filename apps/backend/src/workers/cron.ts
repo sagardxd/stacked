@@ -1,15 +1,17 @@
 import cron from "node-cron";
 import { updateValidatorsInfo } from "./updateValidatorsJob";
 import { config } from "@repo/config";
+import { startCleanupCron } from "./cleanupCron";
 
 export function startCron() {
   cron.schedule(config.VALIDATOR_UPDATE_CRON_SCHEDULE, async () => {
-    console.log(`[cron] updateValidatorsInfo start ${new Date().toISOString()}`);
+    console.log(`[cron] start ${new Date().toISOString()}`);
     try {
       await updateValidatorsInfo();
-      console.log(`[cron] updateValidatorsInfo done ${new Date().toISOString()}`);
+      await startCleanupCron();
+      console.log(`[cron] done ${new Date().toISOString()}`);
     } catch (err) {
-      console.error("[cron] updateValidatorsInfo error", err);
+      console.error("[cron] error", err);
     }
   }, { timezone: "UTC" });
 }
