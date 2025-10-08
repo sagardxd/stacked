@@ -28,7 +28,6 @@ const Home = () => {
 
             socket.onmessage = (event) => {
                 const response = JSON.parse(event.data) as WSData
-                console.log(response.price_updates)
                 setAssets(response.price_updates)
                 SetAssetStore(response.price_updates)
             }

@@ -20,7 +20,8 @@ const LockSheet = forwardRef<BottomSheetModal, LockSheetProps>((_props, ref) => 
     const text = useThemeColor({}, 'text')
     const accent = useThemeColor({}, 'accent')
     const border = useThemeColor({}, 'border')
-    const background = useThemeColor({}, 'background')
+    const background = useThemeColor({}, 'cardBg')
+    const backgroundColor = useThemeColor({}, 'background')
 
     const [quantity, setQuantity] = useState('')
     const [durationUnit, setDurationUnit] = useState<'Months' | 'Years'>('Months')
@@ -39,17 +40,14 @@ const LockSheet = forwardRef<BottomSheetModal, LockSheetProps>((_props, ref) => 
         })
     }
 
-    const handleSheetChanges = useCallback((_index: number) => {}, [])
 
-    const snapPoints = useMemo(() => ['50%', '85%'], [])
-    const backgroundColor = useThemeColor({}, 'background')
+    console.log('🔁 LockSheet rendered')
+
 
     return (
         <BottomSheetModal
             ref={ref}
-            onChange={handleSheetChanges}
-            snapPoints={snapPoints}
-            backgroundStyle={{backgroundColor}}
+            backgroundStyle={{ backgroundColor }}
         >
             <BottomSheetView style={styles.contentContainer} >
                 <AppView style={styles.container}>
@@ -58,9 +56,10 @@ const LockSheet = forwardRef<BottomSheetModal, LockSheetProps>((_props, ref) => 
                             <AppText type='label'>Amount</AppText>
                             <AppTextInput
                                 value={quantity}
-                                setValue={setQuantity}
+                                onChangeText={setQuantity}
                                 keyboardType='number-pad'
                                 placeholder='Enter the quantity'
+                                isBottomSheet
                             />
                             {assetPrice ? (
                                 <AppText>
@@ -202,6 +201,7 @@ const styles = StyleSheet.create({
         height: 56
     },
     silderBtn: {
+        paddingTop: 40,
         paddingBottom: 12
     }
 })

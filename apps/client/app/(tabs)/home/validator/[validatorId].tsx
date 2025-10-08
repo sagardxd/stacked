@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppPage } from '@/components/app-page';
 import { AppText } from '@/components/app-text';
@@ -21,6 +21,7 @@ const ValidatorDetails = () => {
     const cardBg = useThemeColor({}, 'cardBg');
     const border = useThemeColor({}, 'border');
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const [showLockSheet, setShowLockSheet] = useState(false)
 
 
     const validator = useMemo<ValidatorDetailsType>(() => ({
@@ -44,57 +45,58 @@ const ValidatorDetails = () => {
     };
 
     const handlePresentModalPress = useCallback(() => {
+        setShowLockSheet(true);
         bottomSheetModalRef.current?.present();
     }, []);
 
 
     return (
         <BottomSheetModalProvider>
-        <AppView style={{flex: 1}}>
-            <AppPage>
-                <AppBackBtn onPress={() => router.back()} />
+            <AppView style={{ flex: 1 }}>
+                <AppPage>
+                    <AppBackBtn onPress={() => router.back()} />
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* Header Card */}
-                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                        <ValidatorHeader
-                            name={validator.name}
-                            website={validator.website}
-                            avatarUrl={validator.avatar_url}
-                            onOpenLink={openLink}
-                        />
-                    </AppView>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {/* Header Card */}
+                        <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                            <ValidatorHeader
+                                name={validator.name}
+                                website={validator.website}
+                                avatarUrl={validator.avatar_url}
+                                onOpenLink={openLink}
+                            />
+                        </AppView>
 
-                    {/* Statistics Card */}
-                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                        <AppText type="small" style={styles.sectionTitle}>Statistics</AppText>
-                        <ValidatorStats
-                            aprPercent={`${validator.apr.toFixed(2)}%`}
-                            commissionPercent={`${validator.commission}%`}
-                            jitoText={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}
-                            activeStakeText={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`}
-                        />
-                    </AppView>
+                        {/* Statistics Card */}
+                        <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                            <AppText type="small" style={styles.sectionTitle}>Statistics</AppText>
+                            <ValidatorStats
+                                aprPercent={`${validator.apr.toFixed(2)}%`}
+                                commissionPercent={`${validator.commission}%`}
+                                jitoText={validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}
+                                activeStakeText={`${lamportsToSol(validator.active_stake).toLocaleString()} SOL`}
+                            />
+                        </AppView>
 
-                    {/* Details Card */}
-                    <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
-                        <AppText type="small" style={styles.sectionTitle}>Details</AppText>
-                        <ValidatorDetailsSection
-                            about={validator.details || '—'}
-                            stakePools={validator.stake_pools_list?.join(', ') || '—'}
-                            softwareClient={validator.software_client}
-                        />
-                    </AppView>
+                        {/* Details Card */}
+                        <AppView style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}>
+                            <AppText type="small" style={styles.sectionTitle}>Details</AppText>
+                            <ValidatorDetailsSection
+                                about={validator.details || '—'}
+                                stakePools={validator.stake_pools_list?.join(', ') || '—'}
+                                softwareClient={validator.software_client}
+                            />
+                        </AppView>
 
 
-                </ScrollView>
-            </AppPage>
-            {/* Actions */}
-            <AppView style={styles.buttonContainer}>
-                <AppButton title='Lock Assets' onPress={handlePresentModalPress} type='secondary' buttonStyle={{flex: 1}}/>
+                    </ScrollView>
+                </AppPage>
+                {/* Actions */}
+                <AppView style={styles.buttonContainer}>
+                    <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{ flex: 1 }} />
+                </AppView>
+                {/* {showLockSheet && <LockSheet ref={bottomSheetModalRef} />} */}
             </AppView>
-            <LockSheet ref={bottomSheetModalRef} />
-        </AppView>
         </BottomSheetModalProvider>
     )
 }
