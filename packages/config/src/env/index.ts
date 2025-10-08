@@ -12,6 +12,8 @@ const envSchema = z.object({
     VALIDATOR_TOKEN: z.string(),
     VALIDATOR_API_URL: z.string().url(),
     VALIDATOR_UPDATE_CRON_SCHEDULE: z.string().default("0 3 * * *"), // Default to daily at 03:00 UTC
+    JWT_SECRET: z.string(),
+    APP_URI: z.string().url().default("http://localhost:3000"),
 })
 
 const env = envSchema.parse(process.env);
@@ -24,6 +26,8 @@ export const config = {
     VALIDATOR_TOKEN: env.VALIDATOR_TOKEN,
     VALIDATOR_API_URL: env.VALIDATOR_API_URL,
     VALIDATOR_UPDATE_CRON_SCHEDULE: env.VALIDATOR_UPDATE_CRON_SCHEDULE,
+    JWT_SECRET: env.JWT_SECRET,
+    APP_URI: env.APP_URI,
 }
 
 
