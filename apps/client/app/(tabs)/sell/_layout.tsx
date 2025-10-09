@@ -1,9 +1,10 @@
 import { Stack } from "expo-router"
 
-export default function SellLayout() {
+export default function Layout() {
     return (
         <Stack screenOptions={{headerShown: false}}>
-            <Stack.Screen name="holdings"/>
+            <Stack.Screen name="index"/>
+            <Stack.Screen name="holding/[holdingId]"/>
         </Stack>
     )
 }

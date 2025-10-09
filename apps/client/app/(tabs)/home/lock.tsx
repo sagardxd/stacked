@@ -215,7 +215,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         gap: 24,
-        justifyContent: "space-between"
+        justifyContent: "space-between",
     },
     subtitle: {
         opacity: 0.6

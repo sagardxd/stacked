@@ -55,13 +55,17 @@ const Holdings = () => {
     },
   ]
 
+  const handleSaleCardOnPress = () => {
+    router.push(`/(tabs)/sell/holding/1`)
+  }
+
   return (
     <AppPage>
       <AppBackBtn onPress={() => router.back()} title='Marketplace' />
       <SaleHeader totalListings={24} />
       <FlatList<AssetForSale>
         data={assetForSaleList}
-        renderItem={({ item }) => <SaleCard holding={item} />}
+        renderItem={({ item }) => <SaleCard holding={item} onPress={handleSaleCardOnPress}/>}
         keyExtractor={item => item.id}
       />
     </AppPage>
