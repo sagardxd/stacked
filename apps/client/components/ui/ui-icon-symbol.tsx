@@ -8,6 +8,7 @@ const MAPPING = {
   wallet: 'wallet-outline',
   lock: 'lock-closed-outline',
   settings: 'settings-outline',
+  pricetag: 'pricetag-outline',
 } as const
 
 export type UiIconSymbolName = keyof typeof MAPPING

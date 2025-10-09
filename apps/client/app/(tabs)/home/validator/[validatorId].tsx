@@ -13,15 +13,12 @@ import ValidatorStats from '@/components/validators/ValidatorStats';
 import ValidatorDetailsSection from '@/components/validators/ValidatorDetailsSection';
 import { AppButton } from '@/components/onboarding';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import LockSheet from '@/components/home/LockSheet';
 
 const ValidatorDetails = () => {
     const { validatorId } = useLocalSearchParams<{ validatorId: string }>();
     const router = useRouter();
     const cardBg = useThemeColor({}, 'cardBg');
     const border = useThemeColor({}, 'border');
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const [showLockSheet, setShowLockSheet] = useState(false)
 
 
     const validator = useMemo<ValidatorDetailsType>(() => ({
@@ -43,13 +40,6 @@ const ValidatorDetails = () => {
     const openLink = (url: string) => {
         Linking.openURL(url).catch((err: any) => console.log("Couldn't load page", err));
     };
-
-    const handlePresentModalPress = useCallback(() => {
-        setShowLockSheet(true);
-        bottomSheetModalRef.current?.present();
-    }, []);
-
-
     return (
         <BottomSheetModalProvider>
             <AppView style={{ flex: 1 }}>
@@ -95,7 +85,6 @@ const ValidatorDetails = () => {
                 <AppView style={styles.buttonContainer}>
                     <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{ flex: 1 }} />
                 </AppView>
-                {/* {showLockSheet && <LockSheet ref={bottomSheetModalRef} />} */}
             </AppView>
         </BottomSheetModalProvider>
     )
