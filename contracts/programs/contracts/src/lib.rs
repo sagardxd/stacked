@@ -15,7 +15,6 @@ pub mod contracts {
 
     pub fn create_position(
         ctx: Context<CreatePosition>,
-        position_id: [u8; 32],
         lock_duration: u64,
         transferable: bool,
     ) -> Result<()> {
@@ -23,10 +22,15 @@ pub mod contracts {
         let clock = Clock::get()?;
         let bumps = ctx.bumps;
 
-        position.position_id = position_id;
         position.owner = ctx.accounts.owner.key();
-        position.validator = ctx.accounts.validator.key();
-        position.amount = ctx.accounts.stake_account.to_account_info().lamports();
+        position.stake_account = ctx.accounts.stake_account.key();
+        position.validator_vote = ctx.accounts.validator_vote.key();
+        position.amount = **ctx
+            .accounts
+            .stake_account
+            .to_account_info()
+            .lamports
+            .borrow();
         position.for_sale = false;
         position.start_ts = clock.unix_timestamp as u64;
         position.maturity_ts = lock_duration;
@@ -36,26 +40,20 @@ pub mod contracts {
         position.stake_authority_bump = bumps.stake_authority;
 
         require_keys_eq!(
-            *ctx.accounts.stake_account.owner,
+            *ctx.accounts.stake_account.to_account_info().owner,
             ctx.accounts.stake_program.key()
         );
 
         let stake_acc = ctx.accounts.stake_account.to_account_info();
         let stake_auth = ctx.accounts.stake_authority.to_account_info();
-        let validator_acc = ctx.accounts.validator.to_account_info();
+        let validator_acc = ctx.accounts.validator_vote.to_account_info();
         let stake_history = ctx.accounts.stake_history.to_account_info();
-        let stake_config = ctx.accounts.stake_config.to_account_info();
-        let stake_program_acc = ctx.accounts.stake_program.to_account_info();
+        let stake_program = ctx.accounts.stake_program.to_account_info();
         let clock_acc = ctx.accounts.clock.to_account_info();
-        let position_key = position.key();
 
         let delegate =
             instruction::delegate_stake(&stake_acc.key(), &stake_auth.key(), &validator_acc.key());
-        let signer_seeds: &[&[u8]] = &[
-            b"stake-authority",
-            position_key.as_ref(),
-            &[position.stake_authority_bump],
-        ];
+        let signer_seeds: &[&[u8]] = &[b"stake-authority".as_ref(), &[position.stake_authority_bump]];
 
         invoke_signed(
             &delegate,
@@ -65,8 +63,7 @@ pub mod contracts {
                 stake_auth,
                 clock_acc,
                 stake_history,
-                stake_config,
-                stake_program_acc,
+                stake_program,
             ],
             &[signer_seeds],
         )?;
@@ -75,22 +72,25 @@ pub mod contracts {
     }
 
     pub fn list_for_sale(ctx: Context<ListForSale>, price: u64) -> Result<()> {
-        let position = &mut ctx.accounts.position;
+        let pos = &mut ctx.accounts.position;
         require!(
-            position.owner == ctx.accounts.owner.key(),
+            pos.owner == ctx.accounts.owner.key(),
             ErrorCode::Unauthorized
         );
-        require!(position.transferable == true, ErrorCode::NotForSale);
+        require!(pos.transferable == true, ErrorCode::NotTransferable);
 
-        position.for_sale = true;
-        position.listed_price = price;
+        pos.for_sale = true;
+        pos.listed_price = price;
 
         Ok(())
     }
 
     pub fn cancel_sale(ctx: Context<CancelSale>) -> Result<()> {
         let pos = &mut ctx.accounts.position;
-
+        require!(
+            pos.owner == ctx.accounts.owner.key(),
+            ErrorCode::Unauthorized
+        );
         pos.for_sale = false;
         pos.listed_price = 0;
 
@@ -101,6 +101,16 @@ pub mod contracts {
         let pos = &mut ctx.accounts.position;
         require!(pos.for_sale, ErrorCode::NotForSale);
         require!(pos.transferable, ErrorCode::NotTransferable);
+        require!(pos.listed_price > 0, ErrorCode::InvalidPrice);
+        require!(
+            ctx.accounts.buyer.lamports() >= pos.listed_price,
+            ErrorCode::PaymentFailed
+        );
+        require_eq!(
+            pos.owner,
+            ctx.accounts.seller.key(),
+            ErrorCode::Unauthorized
+        );
 
         let cpi_ctx = CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
@@ -125,26 +135,22 @@ pub mod contracts {
             ErrorCode::Unauthorized
         );
 
-        let stack_acc = ctx.accounts.stake_account.to_account_info();
-        let stack_auth = ctx.accounts.stake_authority.to_account_info();
-        let stact_program_acc = ctx.accounts.stack_program.to_account_info();
-        let clock = Clock::get()?;
-        let position_key = pos.key();
+        let stake_acc = ctx.accounts.stake_account.to_account_info();
+        let stake_auth = ctx.accounts.stake_authority.to_account_info();
+        let stake_program = ctx.accounts.stake_program.to_account_info();
+        let clock = ctx.accounts.clock.to_account_info();
+        let stake_history = ctx.accounts.stake_history.to_account_info();
 
-        let deactivate = instruction::deactivate_stake(&stack_acc.key(), &stack_auth.key());
-        let signer_seeds: &[&[u8]] = &[
-            b"stake-authority",
-            position_key.as_ref(),
-            &[pos.stake_authority_bump],
-        ];
+        let deactivate = instruction::deactivate_stake(&stake_acc.key(), &stake_auth.key());
+        let signer_seeds: &[&[u8]] = &[b"stake-authority".as_ref(), &[pos.stake_authority_bump]];
 
         invoke_signed(
             &deactivate,
-            &[stack_acc, stack_auth, stact_program_acc],
+            &[stake_acc, stake_auth, clock, stake_history, stake_program],
             &[signer_seeds],
         )?;
 
-        pos.deactivated_at = Some(clock.unix_timestamp as u64);
+        pos.deactivated_at = Some(Clock::get()?.unix_timestamp as u64);
 
         Ok(())
     }
@@ -169,26 +175,30 @@ pub mod contracts {
 
         let stake_acc = ctx.accounts.stake_account.to_account_info();
         let stake_auth = ctx.accounts.stake_authority.to_account_info();
-        let stake_program_acc = ctx.accounts.stake_program.to_account_info();
-        let position_key = pos.key();
+        let stake_program = ctx.accounts.stake_program.to_account_info();
         let clock = ctx.accounts.clock.to_account_info();
+        let recipient = ctx.accounts.owner.to_account_info();
+        let stake_history = ctx.accounts.stake_history.to_account_info();
 
         let withdraw = instruction::withdraw(
             &stake_acc.key(),
             &stake_auth.key(),
             &pos.owner,
-            pos.amount,
-            Some(&clock.key()),
+            **stake_acc.lamports.borrow(),
+            None
         );
-        let signer_seeds: &[&[u8]] = &[
-            b"stake-authority",
-            position_key.as_ref(),
-            &[pos.stake_authority_bump],
-        ];
+        let signer_seeds: &[&[u8]] = &[b"stake-authority".as_ref(), &[pos.stake_authority_bump]];
 
         invoke_signed(
             &withdraw,
-            &[stake_acc, stake_auth, clock, stake_program_acc],
+            &[
+                stake_acc,
+                stake_auth,
+                recipient,
+                clock,
+                stake_history,
+                stake_program,
+            ],
             &[signer_seeds],
         )?;
 
@@ -197,9 +207,8 @@ pub mod contracts {
 }
 
 #[derive(Accounts)]
-#[instruction(position_id: Pubkey)]
 pub struct CreatePosition<'info> {
-    #[account(init, payer = owner, space = 8  + Position::INIT_SPACE, seeds = [b"position", position_id.as_ref()], bump)]
+    #[account(init, payer = owner, space = 8  + Position::INIT_SPACE, seeds = [b"position", stake_account.key().as_ref()], bump)]
     pub position: Account<'info, Position>,
 
     /// CHECK: stake_account is created by the user and must be a valid stake account
@@ -207,14 +216,14 @@ pub struct CreatePosition<'info> {
     pub stake_account: UncheckedAccount<'info>,
 
     /// CHECK: stake_authority is a PDA
-    #[account(seeds = [b"stake-authority", position.key().as_ref()], bump)]
+    #[account(seeds = [b"stake-authority"], bump)]
     pub stake_authority: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub owner: Signer<'info>,
 
     /// CHECK: validator is the expected validator vote account
-    pub validator: UncheckedAccount<'info>,
+    pub validator_vote: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
 
@@ -222,8 +231,8 @@ pub struct CreatePosition<'info> {
     pub stake_program: UncheckedAccount<'info>,
     pub clock: Sysvar<'info, Clock>,
     pub stake_history: Sysvar<'info, StakeHistory>,
-    /// CHECK: stake_config is the expected stake config program id
-    pub stake_config: UncheckedAccount<'info>,
+    /// CHECK: rent is the expected rent sysvar
+    pub rent: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -267,19 +276,20 @@ pub struct Deactivate<'info> {
     pub stake_account: UncheckedAccount<'info>,
 
     /// CHECK: stake_authority is a PDA
-    #[account(seeds = [b"stake-authority", position.key().as_ref()], bump = position.stake_authority_bump)]
+    #[account(seeds = [b"stake-authority"], bump = position.stake_authority_bump)]
     pub stake_authority: UncheckedAccount<'info>,
 
     pub owner: Signer<'info>,
 
     /// CHECK: stake_program is the expected stake program id
-    pub stack_program: UncheckedAccount<'info>,
+    pub stake_program: UncheckedAccount<'info>,
+    pub stake_history: Sysvar<'info, StakeHistory>,
     pub clock: Sysvar<'info, Clock>,
 }
 
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
-    #[account(mut, has_one = owner)]
+    #[account(mut, has_one = owner, close = owner)]
     pub position: Account<'info, Position>,
 
     /// CHECK: stake_account is the stake account to withdraw from
@@ -287,22 +297,23 @@ pub struct Withdraw<'info> {
     pub stake_account: UncheckedAccount<'info>,
 
     /// CHECK: stake_authority is a PDA
-    #[account(seeds = [b"stake-authority", position.key().as_ref()], bump = position.stake_authority_bump)]
+    #[account(seeds = [b"stake-authority"], bump = position.stake_authority_bump)]
     pub stake_authority: UncheckedAccount<'info>,
 
     pub owner: Signer<'info>,
 
     /// CHECK: stake_program is the expected stake program id
     pub stake_program: UncheckedAccount<'info>,
+    pub stake_history: Sysvar<'info, StakeHistory>,
     pub clock: Sysvar<'info, Clock>,
 }
 
 #[account]
 #[derive(InitSpace)]
 pub struct Position {
-    pub position_id: [u8; 32],
     pub owner: Pubkey,
-    pub validator: Pubkey,
+    pub validator_vote: Pubkey,
+    pub stake_account: Pubkey,
     pub amount: u64,
     pub start_ts: u64,
     pub maturity_ts: u64,
@@ -334,4 +345,6 @@ pub enum ErrorCode {
     NotMature,
     #[msg("Arithmetic overflow")]
     ArithmeticOverflow,
+    #[msg("Invalid price")]
+    InvalidPrice,
 }
