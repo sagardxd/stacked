@@ -11,7 +11,7 @@ const main = async () => {
     await redisClient.connect();
 
     const backpackWS = new WebSocket("wss://ws.backpack.exchange/");
-    const msg = { method: "SUBSCRIBE", params: [ "bookTicker.SOL_USDC", "bookTicker.ETH_USDC"], id: 1 }
+    const msg = { method: "SUBSCRIBE", params: [ "bookTicker.SOL_USDC"], id: 1 }
 
     backpackWS.onopen = (() => {
         backpackWS.send(JSON.stringify(msg))
@@ -24,8 +24,7 @@ const main = async () => {
 
         const parsed: AssetData = { 
             asset: data.s.replace("_USDC", ""),
-            askPrice: Math.round(Number(data.a) * Math.pow(10, data.a.split(".")[1].length)),
-            bidPrice: Math.round(Number(data.b) * Math.pow(10, data.a.split(".")[1].length)),
+            currPrice: Math.round(Number(data.a) * Math.pow(10, data.a.split(".")[1].length)),
             decimal: data.a.split(".")[1].length
         }
 
@@ -40,6 +39,7 @@ const main = async () => {
     setInterval(async () => {
         try {
             if (assets.price_updates.length > 0) {
+                console.log(assets)
                 await redisClient.publish(ChannelName.ASSET_PRICES, assets)
             }
         } catch (err) {

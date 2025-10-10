@@ -1,26 +1,44 @@
-import { Tabs } from 'expo-router'
+import { Tabs, usePathname } from 'expo-router'
 import React from 'react'
 import { UiIconSymbol } from '@/components/ui/ui-icon-symbol'
 
 export default function TabLayout() {
+  const pathname = usePathname()
+
+  // Hide tab bar on any sub-routes
+  const shouldHideTabs = pathname.split('/').length > 2
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
-      {/* The index redirects to the account screen */}
-      <Tabs.Screen name="index" options={{ tabBarItemStyle: { display: 'none' } }} />
+    <Tabs screenOptions={{
+      headerShown: false,
+      tabBarStyle: shouldHideTabs ? { display: 'none' } : undefined
+    }}>
       <Tabs.Screen
-        name="account"
+        name="home"
         options={{
-          title: 'Account',
+          title: 'Home',
           tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="home" color={color} />,
         }}
       />
-        <Tabs.Screen
-          name="portfolio"
-          options={{
-            title: 'Portfolio',
-            tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="wallet" color={color} />,
-          }}
-        /> 
+      <Tabs.Screen
+        name="portfolio"
+        options={{
+          title: 'Portfolio',
+          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="wallet" color={color} />,
+        }}
+      />
+       <Tabs.Screen
+        name="sell"
+        options={{
+          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="pricetag" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="settings" color={color} />,
+        }}
+      />
     </Tabs>
   )
 }

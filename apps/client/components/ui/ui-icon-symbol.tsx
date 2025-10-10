@@ -6,6 +6,9 @@ const MAPPING = {
   search: 'search',
   home: 'home-outline',
   wallet: 'wallet-outline',
+  lock: 'lock-closed-outline',
+  settings: 'settings-outline',
+  pricetag: 'pricetag-outline',
 } as const
 
 export type UiIconSymbolName = keyof typeof MAPPING
@@ -23,3 +26,4 @@ export function UiIconSymbol({
 }) {
   return <Ionicons color={color} size={size} name={MAPPING[name]} style={style} />
 }
+  
