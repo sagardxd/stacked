@@ -3,7 +3,7 @@ import { AppPage } from '@/components/app-page'
 import AppBackBtn from '@/components/app-back-button'
 import { useRouter } from 'expo-router'
 
-const HoldingId = () => {
+const AssetId = () => {
   const router = useRouter();
 
   return (
@@ -13,4 +13,4 @@ const HoldingId = () => {
   )
 }
 
-export default HoldingId
+export default AssetId

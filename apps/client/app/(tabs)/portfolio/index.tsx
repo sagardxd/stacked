@@ -7,11 +7,13 @@ import { AppView } from '@/components/app-view'
 import { StakingCardList } from '@/components/portfolio/StakingCardList'
 import { AppPage } from '@/components/app-page'
 import { SipAsset, StakingAsset } from '@/types/asset.types'
+import { useRouter } from 'expo-router'
 
 const Portfolio = () => {
-
+  const router = useRouter();
 
   const handleCardPress = (asset: StakingAsset | SipAsset) => {
+    router.push('/(tabs)/portfolio/asset/1')
     console.log('Pressed staking card:', asset.name);
   };
 
