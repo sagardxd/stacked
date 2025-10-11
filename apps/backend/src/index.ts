@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/validator", validatorRoutes);
+app.use("/api/validators", validatorRoutes);
 app.use("/api/positions", positionsRoutes);
 
 app.listen(config.PORT_BACKEND, () => {
