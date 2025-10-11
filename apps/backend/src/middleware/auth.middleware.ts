@@ -3,14 +3,9 @@ import jwt from "jsonwebtoken";
 import { config } from "@repo/config";
 import type { ApiResponse } from "@repo/types";
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    walletPubkey: string;
-  };
-}
 
-export function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -37,7 +32,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
     }
     
     req.user = {
-      id: decoded.id,
+      id: decoded.id.toString(),
       walletPubkey: decoded.walletPubkey,
     };
 

@@ -12,8 +12,12 @@ const envSchema = z.object({
     VALIDATOR_TOKEN: z.string(),
     VALIDATOR_API_URL: z.string().url(),
     VALIDATOR_UPDATE_CRON_SCHEDULE: z.string().default("0 3 * * *"), // Default to daily at 03:00 UTC
+    POSITION_STATUS_CRON_SCHEDULE: z.string().default("2 * * * *"), // Default to every 2 minutes
     JWT_SECRET: z.string(),
     APP_URI: z.string().url().default("http://localhost:3000"),
+    PROGRAM_ID: z.string(),
+    DEVNET_RPC_URL: z.string().url(),
+    MAINNET_RPC_URL: z.string().url().optional(),
 })
 
 const env = envSchema.parse(process.env);
@@ -26,8 +30,12 @@ export const config = {
     VALIDATOR_TOKEN: env.VALIDATOR_TOKEN,
     VALIDATOR_API_URL: env.VALIDATOR_API_URL,
     VALIDATOR_UPDATE_CRON_SCHEDULE: env.VALIDATOR_UPDATE_CRON_SCHEDULE,
+    POSITION_STATUS_CRON_SCHEDULE: env.POSITION_STATUS_CRON_SCHEDULE,
     JWT_SECRET: env.JWT_SECRET,
     APP_URI: env.APP_URI,
+    PROGRAM_ID: env.PROGRAM_ID,
+    DEVNET_RPC_URL: env.DEVNET_RPC_URL,
+    MAINNET_RPC_URL: env.MAINNET_RPC_URL,
 }
 
 
