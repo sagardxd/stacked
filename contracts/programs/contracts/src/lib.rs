@@ -1,6 +1,6 @@
 use anchor_lang::{accounts::signer, prelude::*};
 
-declare_id!("DKzf13FTkMC2p2UxqL3s4UEp5V3BFGNid2HGhkq9NBJu");
+declare_id!("HnQrEQ2Nc5gMDoTKKorceNujbGKoEbYEPKfcuH69hb5S");
 
 #[program]
 pub mod contracts {

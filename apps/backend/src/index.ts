@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
+import {config} from "@repo/config";
 
 import validatorRoutes from "./routes/validator.route";
 import authRoutes from "./routes/auth.route";
+import positionsRoutes from "./routes/positions.route";
 import { startCron } from "./workers/cron";
 
 const app = express();
@@ -12,8 +14,9 @@ app.use(cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/validator", validatorRoutes);
+app.use("/api/positions", positionsRoutes);
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+app.listen(config.PORT_BACKEND, () => {
+  console.log(`Server is running on http://localhost:${config.PORT_BACKEND}`);
   startCron();
 });

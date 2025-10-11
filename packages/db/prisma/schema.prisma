@@ -53,18 +53,19 @@ model Position {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  seed               String
-  stakeAccountPubkey String?
+  seed               String @unique
+  stakeAccountPubkey String? @unique
 
-  validatorId  String
-  validator    Validator      @relation(fields: [validatorId], references: [id])
-  lamports     BigInt
-  status       PositionStatus @default(PENDING)
-  txSignature  String?
-  activeAt     DateTime?
-  closeAt      DateTime?
-  transferable Boolean        @default(false)
-  lockedUntil  DateTime?
+  validatorId   String
+  validator     Validator      @relation(fields: [validatorId], references: [id])
+  lamports      BigInt
+  status        PositionStatus @default(PENDING)
+  txSignature   String?
+  activeAt      DateTime?
+  closeAt       DateTime?
+  transferable  Boolean        @default(false)
+  lockedUntil   DateTime?
+  deactivatedAt DateTime?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -96,10 +97,12 @@ model Nonce {
 
 enum PositionStatus {
   PENDING
-  ACTIVE
-  CLOSED
-  FAILED
-  EXPIRED
+  ACTIVATING      
+  ACTIVE           
+  DEACTIVATING
+  INACTIVE         
+  CLOSED           
+  FAILED           
 }
 
 enum ListingStatus {

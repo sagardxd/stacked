@@ -1,6 +1,5 @@
 import crypto from "crypto";
 
-// utils/auth.ts
 export function buildAuthMessage({
   domain = "localhost",
   walletPubkey,
