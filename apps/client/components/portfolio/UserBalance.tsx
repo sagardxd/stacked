@@ -3,6 +3,7 @@ import { AppText } from '../app-text'
 import { AppView } from '../app-view'
 import { StyleSheet } from 'react-native'
 import { useThemeColor } from '@/hooks/use-theme-color'
+import { StaggeredCardNumber } from '../ui/staggered-card-number'
 
 interface UserBalanceProps {
   balance: number
@@ -10,6 +11,7 @@ interface UserBalanceProps {
 
 const UserBalance: React.FC<UserBalanceProps> = ({ balance }) => {
   const accent = useThemeColor({}, 'accent')
+  const cardBg = useThemeColor({}, 'cardBg')
   const [rawBalance, setRawBalance] = useState(balance);
 
   const displayBalance = rawBalance.toLocaleString('en-IN', {
@@ -17,11 +19,11 @@ const UserBalance: React.FC<UserBalanceProps> = ({ balance }) => {
   })
 
   return (
-    <AppView style={styles.balanceContainer}>
-      <AppText type='subheading' style={styles.balanceText}>${displayBalance}</AppText>
-      <AppText type='body' style={[styles.balanceBody, {color: accent}]}>+1.56% ($97.38) 
+    <AppView style={[styles.balanceContainer, {backgroundColor: cardBg}]}>
+      <StaggeredCardNumber balance={displayBalance} />
+      {/* <AppText type='body' style={[styles.balanceBody, { color: accent }]}>+1.56% ($97.38)
         <AppText type='body'> Overall</AppText>
-      </AppText>
+      </AppText> */}
     </AppView>
   )
 }
@@ -29,7 +31,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({ balance }) => {
 const styles = StyleSheet.create({
   balanceContainer: {
     flexDirection: 'column',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    borderRadius: 12,
   },
   balanceText: {
     fontWeight: '700'

@@ -63,7 +63,7 @@ export function AppButton({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 12,
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 32,
     alignItems: 'center',
     justifyContent: 'center',

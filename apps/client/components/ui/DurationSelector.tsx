@@ -69,7 +69,7 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
             onPress={() => onDurationChange(duration)}
           >
             <AppText 
-              type='body' 
+              type='small' 
               style={{ 
                 color: selectedDuration === duration ? '#FFFFFF' : text + '80',
                 fontWeight: selectedDuration === duration ? '600' : '500'
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   durationButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 8,
     alignItems: 'center',

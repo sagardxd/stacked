@@ -78,8 +78,6 @@ const ValidatorDetails = () => {
                             about={validator.details || '—'}
                             voteAccount={validator.voteAccountPubkey || '—'}
                             network={validator.network || 'Unknown'}
-                            createdAt={validator.createdAt || '—'}
-                            updatedAt={validator.updatedAt || '—'}
                         />
                     </AppView>
 

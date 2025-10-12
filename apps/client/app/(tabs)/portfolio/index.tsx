@@ -8,6 +8,7 @@ import { StakingCardList } from '@/components/portfolio/StakingCardList'
 import { AppPage } from '@/components/app-page'
 import { SipAsset, StakingAsset } from '@/types/asset.types'
 import { useRouter } from 'expo-router'
+import { StaggeredCardNumber } from '@/components/ui/staggered-card-number'
 
 const Portfolio = () => {
   const router = useRouter();
@@ -26,19 +27,6 @@ const Portfolio = () => {
         contentContainerStyle={styles.contentContainer}
       >
         <UserBalance balance={3000} />
-        <AppView style={styles.balanceRingContainer}>
-          <BalanceRing
-            size={300}
-            strokeWidth={19}
-            amount="$1560.60"
-            subtitle="+0.64% ($9.98)"
-            segments={[
-              { value: 0.6, color: '#8C6DFA', label: "Sol" },
-              { value: 0.4, color: '#50C4AC', label: "Eth" },
-            ]}
-            gapDegrees={9}
-          />
-        </AppView>
         <AppText type='medium' style={styles.sectionTitle}>Staking Positions</AppText>
         <StakingCardList onCardPress={handleCardPress} />
 

@@ -16,8 +16,6 @@ const ValidatorDetailsSection: React.FC<ValidatorDetailsSectionProps> = ({ about
             <DetailField label="About" value={about} />
             <DetailField label="Vote Account" value={voteAccount} />
             <DetailField label="Network" value={network} />
-            {createdAt && <DetailField label="Created At" value={new Date(createdAt).toLocaleDateString()} />}
-            {updatedAt && <DetailField label="Last Updated" value={new Date(updatedAt).toLocaleDateString()} />}
         </AppCardView>
     )
 }
