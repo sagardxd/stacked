@@ -40,6 +40,18 @@ const ValidatorDetails = () => {
     const openLink = (url: string) => {
         Linking.openURL(url).catch((err: any) => console.log("Couldn't load page", err));
     };
+
+
+    const handlecheck = async () => {
+        try {
+            console.log('Checking API connectivity...')
+            // await checkApi()
+        }
+        catch (error) {
+            console.error('Error in handlecheck:', error)
+        }
+    }
+
     return (
         <BottomSheetModalProvider>
             <AppView style={{ flex: 1 }}>
@@ -84,6 +96,7 @@ const ValidatorDetails = () => {
                 {/* Actions */}
                 <AppView style={styles.buttonContainer}>
                     <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{ flex: 1 }} />
+                    <AppButton title='handlecheck' onPress={handlecheck} type='secondary' buttonStyle={{ flex: 1 }} />
                 </AppView>
             </AppView>
         </BottomSheetModalProvider>

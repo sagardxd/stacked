@@ -10,6 +10,8 @@ import jwt from "jsonwebtoken";
 export async function getAuthNonce(req: Request, res: Response) {
   try {
     const { walletPubkey } = req.query;
+    console.log('sendingnonce for', walletPubkey);
+
     if (typeof walletPubkey !== "string" || !walletPubkey) {
       return res.status(400).json({
         success: false,
@@ -37,6 +39,7 @@ export async function getAuthNonce(req: Request, res: Response) {
       expiryISO: expiresAt.toISOString(),
     });
 
+
     res.status(200).json({
       success: true,
       data: message,
@@ -59,6 +62,8 @@ export async function verifyAuthSignature(req: Request, res: Response) {
         message: "Invalid walletPubkey or signature",
       } as ApiResponse<null>);
     }
+
+    console.log("Verifying signature for wallet:", walletPubkey);
 
     const nonceRecord = await prisma.nonce.findFirst({
       where: {
@@ -114,6 +119,9 @@ export async function verifyAuthSignature(req: Request, res: Response) {
       { expiresIn: "30d" }
     );
     const userWithToken = { ...user, token };
+
+    console.log('/.///////////////////////');
+    console.log(userWithToken);
 
     res.status(200).json({
       success: true,

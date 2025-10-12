@@ -17,6 +17,8 @@ import { useCluster } from '@/components/cluster/cluster-provider'
 import { WalletIcon } from '@wallet-standard/core'
 import { ellipsify } from '@/utils/ellipsify'
 import { AppConfig } from '@/constants/app-config'
+import { removeFromSecureStore } from '@/store/secure-store'
+import { KeyType } from '@/types/keys.types'
 
 const identity: AppIdentity = { name: AppConfig.name, uri: AppConfig.uri }
 
@@ -170,6 +172,10 @@ export function useAuthorization() {
   )
 
   const deauthorizeSessions = useCallback(async () => {
+    const removed = await removeFromSecureStore(KeyType.JWT)
+
+    console.log('removing the token');
+
     await invalidateAuthorizations()
     await persistMutation.mutateAsync(null)
   }, [invalidateAuthorizations, persistMutation])

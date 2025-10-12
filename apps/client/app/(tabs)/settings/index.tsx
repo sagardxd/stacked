@@ -11,7 +11,7 @@ export default function TabSettingsScreen() {
       <SettingsUiAccount />
       <SettingsAppConfig />
       <SettingsUiCluster />
-      <AppText type="default" style={{ opacity: 0.5, fontSize: 14 }}>
+      <AppText type="body" style={{ opacity: 0.5, fontSize: 14 }}>
         Configure app info and clusters in{' '}
         <AppText type="label" style={{ fontSize: 14 }}>
           constants/app-config.tsx

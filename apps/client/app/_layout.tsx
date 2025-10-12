@@ -17,7 +17,7 @@ export default function RootLayout() {
   // Use this hook to track the locations for analytics or debugging.
   // Delete if you don't need it.
   useTrackLocations((pathname, params) => {
-    console.log(`Track ${pathname}`, { params })
+    // console.log(`Track ${pathname}`, { params })
   })
   const [loaded] = useFonts({
     SkModernistMono: require('../assets/fonts/Sk-Modernist-Mono.otf'),
