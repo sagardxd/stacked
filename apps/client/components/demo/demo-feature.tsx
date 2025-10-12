@@ -9,7 +9,7 @@ export function DemoFeature() {
   const { account } = useWalletUi()
   return (
     <AppView>
-      <AppText type="subtitle">Demo page</AppText>
+      <AppText type="body">Demo page</AppText>
       <AppText>Start building your features here.</AppText>
       <DemoFeatureSignMessage address={account?.publicKey as PublicKey} />
     </AppView>

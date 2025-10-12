@@ -3,11 +3,7 @@ import { useAuth } from '@/components/auth/auth-provider'
 import { AppText } from '@/components/app-text'
 import { AppView } from '@/components/app-view'
 import { OnboardingFlow } from '@/components/onboarding'
-import { AppConfig } from '@/constants/app-config'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ActivityIndicator, View, StyleSheet, TouchableOpacity, Dimensions, Text } from 'react-native'
-import { Image } from 'expo-image'
-import { LinearGradient } from 'expo-linear-gradient'
+import { ActivityIndicator, View, StyleSheet, } from 'react-native'
 import { useAppTheme } from '@/components/app-theme'
 
 
@@ -17,7 +13,7 @@ export default function SignIn() {
 
   const handleConnect = async () => {
     await signIn()
-    router.replace('/')
+    router.replace('/(tabs)/home')
   }
 
   return (

@@ -9,7 +9,7 @@ export function SettingsUiCluster() {
   const { selectedCluster, clusters, setSelectedCluster } = useCluster()
   return (
     <AppView>
-      <AppText type="subtitle">Cluster</AppText>
+      <AppText type="body">Cluster</AppText>
       <ClusterUiVersion selectedCluster={selectedCluster} />
       <ClusterUiGenesisHash selectedCluster={selectedCluster} />
       <AppDropdown

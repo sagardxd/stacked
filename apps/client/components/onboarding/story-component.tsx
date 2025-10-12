@@ -233,7 +233,7 @@ export function StoryComponent({ onClose, onComplete }: StoryComponentProps) {
         {/* Wallet Connect Button - Only on last story */}
         {currentIndex === storyData.length - 1 && (
           <View style={styles.buttonContainer}>
-            <AppButton title="Connect Wallet" onPress={handleConnectWallet} />
+            <AppButton title="Connect Wallet" type='primary' onPress={handleConnectWallet} />
           </View>
         )}
       </View>
