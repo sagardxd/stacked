@@ -6,16 +6,16 @@ import { AppCardView } from '../app-card-view';
 export type ValidatorStatsProps = {
     aprPercent: string;
     commissionPercent: string;
-    jitoText: string;
+    network: string;
     activeStakeText: string;
 }
 
-const ValidatorStats: React.FC<ValidatorStatsProps> = ({ aprPercent, commissionPercent, jitoText, activeStakeText }) => {
+const ValidatorStats: React.FC<ValidatorStatsProps> = ({ aprPercent, commissionPercent, network, activeStakeText }) => {
     return (
         <AppCardView style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
             <StatCard label="Estimated APR" value={aprPercent} highlight />
             <StatCard label="Commission" value={commissionPercent} />
-            <StatCard label="Jito MEV" value={jitoText} />
+            <StatCard label="Network" value={network} />
             <StatCard label="Active Stake" value={activeStakeText} />
         </AppCardView>
     )

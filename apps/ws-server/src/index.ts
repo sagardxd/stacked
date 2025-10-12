@@ -1,8 +1,8 @@
 import { createRedis, config } from '@repo/config'
-import { ChannelName, type WSData } from '@repo/types';
+import { ChannelName } from '@repo/types';
 import { WebSocketServer } from 'ws'
 
-const wss = new WebSocketServer({ port: config.PORT_WS_SERVER });
+const wss = new WebSocketServer({ port: config.PORT_WS_SERVER, host: '0.0.0.0' });
 
 const redisClient = createRedis(config.REDIS_URL);
 await redisClient.connect();

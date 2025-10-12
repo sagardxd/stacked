@@ -20,7 +20,7 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
 
     useEffect(() => {
         (async () => {
-            const color = await getColors(validator.avatar_url)
+            const color = await getColors(validator.logoUrl)
             setAprTextColor(color);
         })()
     }, []);
@@ -34,16 +34,16 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
                 {/* Top Section */}
                 <View style={styles.topSection}>
                     <View style={styles.leftSection}>
-                        <Image source={{ uri: validator.avatar_url }} style={styles.logo} />
+                        <Image source={{ uri: validator.logoUrl || '' }} style={styles.logo} />
                         <View style={styles.info}>
-                            <AppText type="medium" style={styles.name}>{validator.name}</AppText>
-                            <AppText type="caption" style={styles.website}>{validator.website}</AppText>
+                            <AppText type="medium" style={styles.name}>{validator.name || 'Unknown Validator'}</AppText>
+                            <AppText type="caption" style={styles.website}>{validator.website || ''}</AppText>
                         </View>
                     </View>
 
                     <View style={styles.rightSection}>
                         <AppText type="caption" style={styles.apyLabel}>Estimated APR</AppText>
-                        <AppText type="medium" style={{ color: aprTextColor }}>{validator.apr.toFixed(2)}%</AppText>
+                        <AppText type="medium" style={{ color: aprTextColor }}>{validator.apr?.toFixed(2) || '0.00'}%</AppText>
                     </View>
                 </View>
 
@@ -51,15 +51,15 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
                 <View style={[styles.bottomSection, { borderTopColor: border }]}>
                     <View style={styles.row}>
                         <AppText type="caption">Commission</AppText>
-                        <AppText type="label">{validator.commission}%</AppText>
+                        <AppText type="label">{validator.commission || 0}%</AppText>
                     </View>
                     <View style={styles.row}>
-                        <AppText type="caption">Jito MEV</AppText>
-                        <AppText type="label">{validator.jito_enabled ? `${validator.jito_commission}%` : 'Disabled'}</AppText>
+                        <AppText type="caption">Network</AppText>
+                        <AppText type="label">{validator.network || 'Unknown'}</AppText>
                     </View>
                     <View style={styles.row}>
                         <AppText type="caption">Active stake</AppText>
-                        <AppText type="label">{lamportsToSol(validator.active_stake).toLocaleString()} SOL</AppText>
+                        <AppText type="label">{lamportsToSol(parseInt(validator.activeStakeLamports || '0')).toLocaleString()} SOL</AppText>
                     </View>
                 </View>
             </Pressable>

@@ -6,7 +6,6 @@ export const fetchBinancePrices = async (
     limit: number = 100
   ): Promise<[string, number][]> => {
 
-    console.log('calling api')
     const res = await axios.get(
       `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
     );

@@ -8,21 +8,12 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import ValidatorList from '@/components/validators/ValidatorList';
 import { getFromSecureStore } from '@/store/secure-store';
 import { KeyType } from '@/types/keys.types';
+import { logger } from '@/utils/logger.service';
 
 const Home = () => {
     const [assets, setAssets] = useState<AssetData[]>([])
     const [isClient, setIsClient] = useState(false);
     const { setAssets: SetAssetStore } = useAssetStore()
-
-    useEffect(() => {
-
-        (async() => {
-            const token = getFromSecureStore(KeyType.JWT);
-            console.log("token", token);
-        })()
-
-    }, [])
-
 
     // useEffect(() => {
     //     if (isClient) return;
@@ -30,7 +21,7 @@ const Home = () => {
     //     let socket: WebSocket | null = null;
 
     //     try {
-    //         socket = new WebSocket(`ws://192.168.1.197:8003`);
+    //         socket = new WebSocket(`ws://127.0.0.1:8003`);
     //         logger.info('Attempting WebSocket connection...');
 
     //         socket.onopen = () => {
@@ -56,7 +47,7 @@ const Home = () => {
 
     //     // Cleanup function
     //     return () => {
-    //         if (socket) {
+    //         if (socket) {   
     //             socket.close();
     //         }
     //     };
@@ -67,7 +58,6 @@ const Home = () => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <AssetHeader asset={Asset.SOL} />
                 <View style={styles.container}>
-                    {/* <DemoFeature /> */}
                     <Graph />
                     <ValidatorList />
                 </View>

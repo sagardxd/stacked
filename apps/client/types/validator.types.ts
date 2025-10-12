@@ -1,18 +1,15 @@
 export interface Validator {
-    id: string
-    name: string
-    avatar_url: string
-    active_stake: number
-    website: string
-    vote_account: string
-    commission: number
-    jito_enabled: boolean
-    jito_commission: number
-    apr: number
+  id: string;
+  network: string;
+  name: string;
+  details: string;
+  logoUrl: string;
+  website: string;
+  voteAccountPubkey: string;
+  activeStakeLamports: string;
+  commission: number;
+  apr: number;
+  aprUpdateAt: string;  
+  createdAt: string;  
+  updatedAt: string;   
 }
-
-export interface ValidatorDetails extends Validator {
-    details?: string;        
-    stake_pools_list?: string[];
-    software_client: string;
-  }

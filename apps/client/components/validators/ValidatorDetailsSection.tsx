@@ -4,16 +4,20 @@ import { AppCardView } from '../app-card-view';
 
 export type ValidatorDetailsSectionProps = {
     about: string;
-    stakePools: string;
-    softwareClient: string;
+    voteAccount: string;
+    network: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
-const ValidatorDetailsSection: React.FC<ValidatorDetailsSectionProps> = ({ about, stakePools, softwareClient }) => {
+const ValidatorDetailsSection: React.FC<ValidatorDetailsSectionProps> = ({ about, voteAccount, network, createdAt, updatedAt }) => {
     return (
         <AppCardView style={{ gap: 20 }}>
             <DetailField label="About" value={about} />
-            <DetailField label="Stake Pools" value={stakePools} />
-            <DetailField label="Software Client" value={softwareClient} />
+            <DetailField label="Vote Account" value={voteAccount} />
+            <DetailField label="Network" value={network} />
+            {createdAt && <DetailField label="Created At" value={new Date(createdAt).toLocaleDateString()} />}
+            {updatedAt && <DetailField label="Last Updated" value={new Date(updatedAt).toLocaleDateString()} />}
         </AppCardView>
     )
 }
