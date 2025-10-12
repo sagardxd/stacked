@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, StyleSheet } from 'react-native'
-import { AppButton } from './app-button'
+import { AppButton } from '../app-button'
 import { WelcomeContent } from './welcome-content'
 import { StoryComponent } from './story-component'
 import { useAuth } from '../auth/auth-provider'

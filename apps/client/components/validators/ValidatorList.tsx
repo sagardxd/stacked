@@ -27,8 +27,6 @@ const ValidatorList = () => {
         router.push(`/(tabs)/home/validator/${id}`)
     }, [router]);
 
-    console.log('koasd')
-
     if (loading) {
         return (
             <AppView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

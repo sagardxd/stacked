@@ -21,9 +21,6 @@ const ValidatorDetails = () => {
     const border = useThemeColor({}, 'border');
     const [validator, setValidator] = useState<Validator | null>(null);
 
-
-    console.log('id', validatorId)
-
     // Fetch validator data
     useEffect(() => {
         const fetchValidator = async () => {
@@ -91,7 +88,7 @@ const ValidatorDetails = () => {
             </AppPage>
             {/* Actions */}
             <AppView style={styles.buttonContainer}>
-                <AppButton title='Lock Assets' onPress={() => router.push('/(tabs)/home/lock')} type='secondary' buttonStyle={{ flex: 1 }} />
+                <AppButton title='Lock Assets' onPress={() => router.push({pathname: '/(tabs)/home/lock', params: {apr: validator.apr}} )} type='secondary' buttonStyle={{ flex: 1 }} />
             </AppView>
         </AppView>
     )

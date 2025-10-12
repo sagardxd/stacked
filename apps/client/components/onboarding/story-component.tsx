@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { AppText } from '@/components/app-text'
 import { useThemeColor } from '@/hooks/use-theme-color'
-import { AppButton } from './app-button'
+import { AppButton } from '../app-button'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 

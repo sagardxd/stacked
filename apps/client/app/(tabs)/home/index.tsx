@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { AppPage } from '@/components/app-page';
-import AssetHeader from '@/components/home/AssetHeader';
+import AssetHeader from '@/components/asset/AssetHeader';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import ValidatorList from '@/components/validators/ValidatorList';
 import AssetChart from '@/components/chart/AssetChart';

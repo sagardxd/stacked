@@ -2,7 +2,7 @@ import React from 'react'
 import { TouchableOpacity, StyleSheet, ActivityIndicator, View, StyleProp, StyleSheetProperties, ViewStyle } from 'react-native'
 import { AppText } from '@/components/app-text'
 import { useThemeColor } from '@/hooks/use-theme-color'
-import { UiIconSymbol, UiIconSymbolName } from '../ui/ui-icon-symbol'
+import { UiIconSymbol, UiIconSymbolName } from './ui/ui-icon-symbol'
 
 interface AppButtonProps {
   title: string

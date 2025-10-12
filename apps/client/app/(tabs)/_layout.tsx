@@ -26,12 +26,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="wallet" color={color} />,
         }}
       />
-       <Tabs.Screen
-        name="sell"
-        options={{
-          tabBarIcon: ({ color }) => <UiIconSymbol size={28} name="pricetag" color={color} />,
-        }}
-      />
       <Tabs.Screen
         name="settings"
         options={{

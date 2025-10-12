@@ -5,13 +5,11 @@
     import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 
     type AppTextInputProps = {
-        // value: string
-        // setValue: (text: string) => void
         variant?: 'primary' | 'secondary'
         leftIcon?: ReactNode
         rightIcon?: ReactNode
         error?: string,
-        isBottomSheet?: boolean
+        isBottomSheet?: boolean,
     } & TextInputProps
 
     const AppTextInput = forwardRef<TextInput, AppTextInputProps>(({ isBottomSheet = false, variant = 'primary', leftIcon, rightIcon, error, style, ...rest }, ref) => {
@@ -20,8 +18,8 @@
 
         return (
             <View style={styles.container}>
-                <View style={[styles.inputContainer, isFocused && { borderColor: accent }]}>
-                    {leftIcon && <View style={styles.icon}>{leftIcon}</View>}
+                <View style={[styles.inputContainer, isFocused &&  variant === "primary" && { borderColor: accent }]}>
+                    {leftIcon && <View style={styles.icon}>{leftIcon}</View>}   
                     {isBottomSheet ?
                         <BottomSheetTextInput
                             style={[styles.input, style, variant === 'primary' ? styles.primary : styles.secondary]}
@@ -57,19 +55,15 @@
         },
         inputContainer: {
             flexDirection: 'row',
-            borderWidth: 1,
-            borderColor: "#A6A6A6",
             alignItems: 'center',
             borderRadius: 12,
             height: 50,
-            paddingHorizontal: 10
         },
         icon: {
             paddingHorizontal: 12
         },
         input: {
             flex: 1,
-            backgroundColor: '#1a1a1a',
             borderRadius: 12,
             paddingHorizontal: 10,
             color: 'white'
