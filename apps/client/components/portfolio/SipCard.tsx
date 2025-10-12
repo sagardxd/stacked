@@ -27,12 +27,9 @@ export const SipCard: React.FC<SipCardProps> = ({ asset, onPress }) => {
             <Image source={{ uri: asset.imageLink }} style={styles.logoContainer} />
 
             <View style={styles.assetInfo}>
-              <AppText type="medium" style={styles.assetName}>
+              <AppText type="button" style={styles.assetName}>
                 {asset.name}
               </AppText>
-              {/* <AppText type="caption">
-              SIP • {asset.frequency.charAt(0).toUpperCase() + asset.frequency.slice(1)}
-            </AppText> */}
               <AppText type="caption">
                 {`Installment: ${asset.amountPerInstallment.toFixed(2)} ${asset.symbol}`}
               </AppText>

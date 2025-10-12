@@ -27,7 +27,7 @@ const Portfolio = () => {
         contentContainerStyle={styles.contentContainer}
       >
         <UserBalance balance={3000} />
-        <AppText type='medium' style={styles.sectionTitle}>Staking Positions</AppText>
+        <AppText type='button' style={styles.sectionTitle}>Staking Positions</AppText>
         <StakingCardList onCardPress={handleCardPress} />
 
       </ScrollView>

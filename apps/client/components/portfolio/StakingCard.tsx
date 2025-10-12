@@ -14,6 +14,7 @@ export const StakingCard: React.FC<StakingCardProps> = ({ asset, onPress }) => {
   const progressPercentage = Math.round(asset.progress * 100);
   const cardBg = useThemeColor({}, 'cardBg');
   const border = useThemeColor({}, 'border');
+  const accent = useThemeColor({}, 'accent');
 
   return (
     <View style={styles.cardcontainer}>
@@ -29,7 +30,7 @@ export const StakingCard: React.FC<StakingCardProps> = ({ asset, onPress }) => {
             <Image source={{ uri: asset.imageLink }} style={styles.logoContainer} />
 
             <View style={styles.assetInfo}>
-              <AppText type="medium" style={styles.assetName}>
+              <AppText type="button" style={styles.assetName}>
                 {asset.name}
               </AppText>
               <AppText type="caption" style={styles.maturityDate}>
@@ -68,7 +69,7 @@ export const StakingCard: React.FC<StakingCardProps> = ({ asset, onPress }) => {
                     styles.progressBarFill,
                     {
                       width: `${progressPercentage}%`,
-                      backgroundColor: asset.color
+                      backgroundColor: accent
                     }
                   ]}
                 />
