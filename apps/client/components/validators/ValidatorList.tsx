@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { AppView } from '../app-view'
 import { AppText } from '../app-text'
 import { Validator } from '@/types/validator.types'
@@ -12,22 +12,22 @@ const ValidatorList = () => {
     const [validators, setValidators] = useState<Validator[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchValidators();
-    }, []);
-
-    const fetchValidators = async () => {
+    const fetchValidators = useCallback(async () => {
         setLoading(true);
-        console.log('getting')
         const data = await getValidators();
-        console.log(data)
         setValidators(data || []);
         setLoading(false);
-    };
+    }, []);
 
-    const handleOnPress = (id: string) => {
+    useEffect(() => {
+        fetchValidators();
+    }, [fetchValidators]);
+
+    const handleOnPress = useCallback((id: string) => {
         router.push(`/(tabs)/home/validator/${id}`)
-    }
+    }, [router]);
+
+    console.log('koasd')
 
     if (loading) {
         return (

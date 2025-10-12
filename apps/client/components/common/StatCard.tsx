@@ -3,12 +3,18 @@ import { AppView } from "../app-view";
 import { AppText } from "../app-text";
 import { StyleSheet } from "react-native";
 
-const StatCard = ({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) => {
+type StatCardProps =  { 
+    label: string; 
+    value: string; 
+    highlight?: boolean, 
+    textType?: "medium" | "small" }
+
+const StatCard = ({ label, value, highlight, textType = "medium" }: StatCardProps) => {
     const border = useThemeColor({}, 'border');
     return (
         <AppView style={[styles.statCard, { borderColor: border }]}>
             <AppText type="caption" style={styles.statLabel}>{label}</AppText>
-            <AppText type="medium" style={[styles.statValue, highlight && styles.highlightValue]}>
+            <AppText type="medium" style={[styles.statValue, highlight && styles.highlightValue, textType === 'small' && {fontSize: 14}]}>
                 {value}
             </AppText>
         </AppView>

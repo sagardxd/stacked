@@ -21,6 +21,9 @@ const ValidatorDetails = () => {
     const border = useThemeColor({}, 'border');
     const [validator, setValidator] = useState<Validator | null>(null);
 
+
+    console.log('id', validatorId)
+
     // Fetch validator data
     useEffect(() => {
         const fetchValidator = async () => {

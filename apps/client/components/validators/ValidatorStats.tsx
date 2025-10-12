@@ -16,7 +16,7 @@ const ValidatorStats: React.FC<ValidatorStatsProps> = ({ aprPercent, commissionP
             <StatCard label="Estimated APR" value={aprPercent} highlight />
             <StatCard label="Commission" value={commissionPercent} />
             <StatCard label="Network" value={network} />
-            <StatCard label="Active Stake" value={activeStakeText} />
+            <StatCard label="Active Stake" value={activeStakeText} textType='small' />
         </AppCardView>
     )
 }

@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, memo, useCallback } from 'react'
 import { Validator } from '@/types/validator.types'
 import { AppView } from '../app-view'
 import { useThemeColor } from '@/hooks/use-theme-color'
@@ -13,23 +13,34 @@ interface ValidatorCardProps {
     onPress: (id: string) => void
 }
 
-const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => {
+const ValidatorCard: React.FC<ValidatorCardProps> = memo(({ validator, onPress }) => {
     const cardBg = useThemeColor({}, 'cardBg');
     const border = useThemeColor({}, 'border');
-    const [aprTextColor, setAprTextColor] = useState(useThemeColor({}, "text"))
+    const [aprTextColor, setAprTextColor] = useState("#ffffff");
 
     useEffect(() => {
+        if (!validator.logoUrl) return;
+        
         (async () => {
-            const color = await getColors(validator.logoUrl)
-            setAprTextColor(color);
-        })()
-    }, []);
+            try {
+                const color = await getColors(validator.logoUrl);
+                setAprTextColor(color);
+            } catch (error) {
+                // Fallback to default color if image processing fails
+                setAprTextColor("#ffffff");
+            }
+        })();
+    }, [validator.logoUrl]);
+
+    const handlePress = useCallback(() => {
+        onPress(validator.id);
+    }, [onPress, validator.id]);
 
     return (
         <AppView style={styles.cardcontainer}>
             <Pressable
                 style={[styles.card, { backgroundColor: cardBg, borderColor: border }]}
-                onPress={() => onPress(validator.id)}
+                onPress={handlePress}
                 android_ripple={{ color: border }}>
                 {/* Top Section */}
                 <View style={styles.topSection}>
@@ -43,7 +54,7 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
 
                     <View style={styles.rightSection}>
                         <AppText type="caption" style={styles.apyLabel}>Estimated APR</AppText>
-                        <AppText type="medium" style={{ color: aprTextColor }}>{validator.apr?.toFixed(2) || '0.00'}%</AppText>
+                        <AppText type="medium" style={{ color: "white" }}>{validator.apr || '0.00'}%</AppText>
                     </View>
                 </View>
 
@@ -65,7 +76,7 @@ const ValidatorCard: React.FC<ValidatorCardProps> = ({ validator, onPress }) => 
             </Pressable>
         </AppView>
     )
-}
+});
 
 const styles = StyleSheet.create({
     cardcontainer: {

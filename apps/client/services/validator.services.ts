@@ -15,9 +15,8 @@ export const getValidators = async () => {
 
 export const getValidatorById = async (id: string) => {
     try {
-        const response = await apiCaller.get<Validator>('/validators', {
-            params: { id }
-        });
+        const response = await apiCaller.get<Validator>(`/validators/${id}`);
+        console.log(response)
         return response.data
     } catch (error) {
         logger.error("getValidatorById", "error getting validator by id", error)
