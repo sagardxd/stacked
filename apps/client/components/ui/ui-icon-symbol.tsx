@@ -18,6 +18,7 @@ export function UiIconSymbol({
   size = 24,
   color,
   style,
+  
 }: {
   name: UiIconSymbolName
   size?: number
