@@ -1,33 +1,33 @@
 import React, { useState } from 'react'
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AppPage } from '@/components/app-page';
 import AppBackBtn from '@/components/app-back-button';
 import SlideButton from '@/components/ui/shrimmer-btn/ShrimmerBtn';
 import { Ionicons } from '@expo/vector-icons'
 import { useSharedValue } from 'react-native-reanimated';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import AppTextInput from '@/components/app-textInput';
 import { AppText } from '@/components/app-text';
-import { useAssetStore } from '@/store/asset.store';
-import { Asset } from '@/types/asset.types';
 import { AppView } from '@/components/app-view';
-import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
-import { AppDropdown } from '@/components/app-dropdown';
-import { AppCardView } from '@/components/app-card-view';
+import { StyleSheet } from 'react-native';
 import DurationSelector from '@/components/ui/DurationSelector';
 import AmountInput from '@/components/ui/AmountInput';
 import AssetBadge from '@/components/asset/AssetBadge';
 import SummarySection from '@/components/ui/SummarySection';
+import { useWalletUi } from '@/components/solana/use-wallet-ui';
+import { useGetBalance } from '@/components/account/use-get-balance';
+import { lamportsToSol } from '@/utils/lamports-to-sol';
 
 const Lock = () => {
     const router = useRouter();
-    const {apr} = useLocalSearchParams<{ apr: string }>();
+    const { signMessage, account } = useWalletUi()
+    const userBalance = useGetBalance({ address: account!.publicKey })
+    const finalUserBalance = userBalance.data ? lamportsToSol(userBalance.data) : 0
     const completed = useSharedValue(false);
     const text = useThemeColor({}, "text");
     const accent = useThemeColor({}, "accent");
 
-
     const [quantity, setQuantity] = useState('');
+    const [transactionCompleted, setTransactionCompleted] = useState(false)
     const [durationUnit, setDurationUnit] = useState<'Months' | 'Years'>('Years');
     const [duration, setDuration] = useState<number>(1);
 
@@ -50,18 +50,21 @@ const Lock = () => {
     }
 
     const handleHalfPress = () => {
-        // Set to half of balance (you can implement actual balance logic)
-        setQuantity('5.0');
+        let quantity = (finalUserBalance / 2).toString();
+        setQuantity(quantity);
     }
 
     const handleMaxPress = () => {
-        // Set to max balance (you can implement actual balance logic)
-        setQuantity('10.0');
+        setQuantity((finalUserBalance).toString());
     }
 
-    const handleCurrencyPress = () => {
-        // Handle currency selection (you can implement currency picker)
-        console.log('Currency selector pressed');
+    const hanndleComplete = async () => {
+        try {
+            const encoded = new TextEncoder().encode(JSON.stringify({ message: "locking asset" }));
+            await signMessage(encoded)
+        } catch {
+
+        }
     }
 
     return (
@@ -82,10 +85,9 @@ const Lock = () => {
                         onChangeText={handleQuantityChange}
                         placeholder='0.00'
                         currency='SOL'
-                        balance='10.0 SOL'
+                        balance={finalUserBalance}
                         onHalfPress={handleHalfPress}
                         onMaxPress={handleMaxPress}
-                        onCurrencyPress={handleCurrencyPress}
                     />
 
                     {/* Duration Section */}
@@ -102,18 +104,17 @@ const Lock = () => {
                     quantity={quantity}
                     duration={duration}
                     durationUnit={durationUnit}
-                    apr={apr}
                 />
 
                 <AppView style={styles.sliderBtnContainer}>
                     <SlideButton
                         startIcon={<Ionicons name='chevron-forward-sharp' color={'white'} />}
-                        endIcon={<Ionicons name='checkmark' color={'white'} />}
+                        endIcon={<Ionicons size={18} name={transactionCompleted ? "checkmark" : "finger-print-outline"} color={'white'} />}
                         fillColor={accent as any}
                         handleColor={'#000000'}
                         baseColor={text + '10'}
                         aboveText="locking assets..."
-                        finalText="Success!"
+                        finalText={transactionCompleted ? "Success!" : "Intialized..."}
                         shimmerTextProps={{
                             text: 'Slide to lock',
                             speed: 4000,
@@ -121,6 +122,7 @@ const Lock = () => {
                         }}
                         style={styles.ctaSlideButton}
                         completed={completed}
+                        onComplete={hanndleComplete}
                     />
                 </AppView>
             </AppView>

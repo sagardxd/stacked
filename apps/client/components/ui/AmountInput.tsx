@@ -7,16 +7,16 @@ import { Ionicons } from '@expo/vector-icons';
 import AssetImage from '../asset/AssetImage';
 import { Asset } from '@/types/asset.types';
 import AssetValueCalculator from '../asset/AssetValueCalculator';
+import { AppView } from '../app-view';
 
 interface AmountInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   currency?: string;
-  balance?: string;
+  balance?: number | string;
   onHalfPress?: () => void;
   onMaxPress?: () => void;
-  onCurrencyPress?: () => void;
 }
 
 const AmountInput: React.FC<AmountInputProps> = ({
@@ -27,7 +27,6 @@ const AmountInput: React.FC<AmountInputProps> = ({
   balance = '0 SOL',
   onHalfPress,
   onMaxPress,
-  onCurrencyPress,
 }) => {
   const text = useThemeColor({}, 'text');
   const border = useThemeColor({}, 'border');
@@ -86,9 +85,8 @@ const AmountInput: React.FC<AmountInputProps> = ({
         </View>
 
         {/* Currency Selector */}
-        <TouchableOpacity
+        <AppView
           style={[styles.currencySelector, { backgroundColor: text + '10' }]}
-          onPress={onCurrencyPress}
         >
           <View style={[styles.currencyIcon, {backgroundColor: cardBg}]}>
             <AssetImage asset={Asset.SOL} width={14} height={14}/>
@@ -96,7 +94,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
           <AppText type='caption' style={[ { color: text }]}>
             {currency}
           </AppText>
-        </TouchableOpacity>
+        </AppView>
       </View>
     </View>
   );

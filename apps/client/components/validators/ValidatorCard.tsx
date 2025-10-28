@@ -45,7 +45,7 @@ const ValidatorCard: React.FC<ValidatorCardProps> = memo(({ validator, onPress }
                 {/* Top Section */}
                 <View style={styles.topSection}>
                     <View style={styles.leftSection}>
-                        <Image source={{ uri: validator.logoUrl || '' }} style={styles.logo} />
+                        <Image source={{ uri: validator.logoUrl || 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg`' }} style={styles.logo} />
                         <View style={styles.info}>
                             <AppText type="medium" style={styles.name}>{validator.name || 'Unknown Validator'}</AppText>
                             <AppText type="caption" style={styles.website}>{validator.website || ''}</AppText>

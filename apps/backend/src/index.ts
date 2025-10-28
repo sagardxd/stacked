@@ -12,6 +12,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (_, res) => {
+ return res.send("hey")
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/validators", validatorRoutes);
 app.use("/api/positions", positionsRoutes);

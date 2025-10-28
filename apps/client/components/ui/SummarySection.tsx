@@ -10,18 +10,15 @@ interface SummarySectionProps {
     quantity: string;
     duration: number;
     durationUnit: 'Months' | 'Years';
-    apr: string
 }
 
 const SummarySection: React.FC<SummarySectionProps> = ({
     quantity,
     duration,
     durationUnit,
-    apr
 }) => {
     const text = useThemeColor({}, "text");
     const accent = useThemeColor({}, "accent");
-    const aprValue = parseFloat(apr);
 
     const assetPrice = useAssetStore((state) => state.getAsset(Asset.SOL));
 
@@ -29,38 +26,30 @@ const SummarySection: React.FC<SummarySectionProps> = ({
 
     // Calculate USD value from SOL amount
     const solAmount = parseFloat(quantity || '0');
-    const assetPriceInDecimal = (assetPrice.currPrice / Math.pow(10, assetPrice.decimal))
+    const assetPriceInDecimal = (assetPrice.currPrice / Math.pow(10, assetPrice.decimal));
     const usdValue = solAmount * assetPriceInDecimal;
 
-    const estimatedReturns = usdValue + (durationUnit === 'Months' ? (aprValue * (duration / 12) * assetPriceInDecimal) : (aprValue * (duration) * assetPriceInDecimal))
+    // Calculate estimated returns based on APR and duration
+    const durationInYears = durationUnit === 'Months' ? (duration / 12) : duration;
+    const estimatedReturns = usdValue * durationInYears;
     const totalValue = usdValue + estimatedReturns;
 
     return (
         <AppView style={styles.container}>
-            {/* Total Payments */}
-            <AppView style={styles.row}>
-                <AppText type='body' style={{ color: text }}>Total payments</AppText>
-                <AppView>
-                    <AppText type='body' style={{ color: text }}>{solAmount.toFixed(2)} SOL</AppText>
-                </AppView>
-            </AppView>
-
             {/* Estimated Returns */}
             <AppView style={styles.row}>
                 <AppView>
                     <AppText type='body' style={{ color: text }}>Estimated returns</AppText>
-                    <AppText type='caption' style={{ color: accent }}>{apr}% APR</AppText>
                 </AppView>
                 <AppView style={styles.returnsContainer}>
                     <AppText type='body' style={{ color: accent }}>+${estimatedReturns.toFixed(2)}</AppText>
-                    <AppText type='caption' style={{ color: text + '60' }}>{((estimatedReturns / usdValue) * 100).toFixed(1)}%</AppText>
                 </AppView>
             </AppView>
 
             {/* Total Value */}
             <AppView style={[styles.row, styles.totalRow]}>
                 <AppText type='button' style={{ color: text }}>Total value</AppText>
-                <AppText type='body' style={{ color: text }}>${usdValue.toFixed(2)}</AppText>
+                <AppText type='body' style={{ color: text }}>${totalValue.toFixed(2)}</AppText>
             </AppView>
         </AppView>
     );

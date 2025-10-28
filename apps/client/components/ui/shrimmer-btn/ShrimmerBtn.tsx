@@ -5,11 +5,11 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import React, { memo } from "react";
 import MaskedView from "@react-native-masked-view/masked-view";
 import ShimmeringText, { ShimmeringTextProps } from "./ShrimmerText";
 import Animated, {
   interpolate,
+  runOnJS,
   SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
@@ -46,6 +46,7 @@ export interface SlideButtonProps {
   baseColor?: string;
   hold?: SharedValue<boolean>;
   progress?: SharedValue<number>;
+  onComplete: () => void
 }
 
 function SlideButton({
@@ -63,6 +64,7 @@ function SlideButton({
   fillColor = "#1A1A1A",
   hold,
   progress: _progress,
+  onComplete,
 }: SlideButtonProps) {
   const height = useSharedValue(0);
   const width = useSharedValue(0);
@@ -140,6 +142,7 @@ function SlideButton({
 
       if (progress.value >= width.value) {
         completed.value = true;
+        runOnJS(onComplete)();
         return;
       }
       offset.value = withSpring(0, SPRING_CONFIG);
@@ -160,12 +163,12 @@ function SlideButton({
         completed.value
           ? 1
           : factor > visibleWidth.value / 4
-          ? interpolate(
+            ? interpolate(
               factor,
               [(visibleWidth.value - WIDTH) / 2, visibleWidth.value],
               [0, 1]
             )
-          : 0,
+            : 0,
         SPRING_CONFIG
       ),
       transform: [

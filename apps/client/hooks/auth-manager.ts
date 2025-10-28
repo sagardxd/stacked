@@ -4,7 +4,6 @@ import { KeyType } from "@/types/keys.types";
 import { logger } from "@/utils/logger.service";
 import { useWalletUi } from "@/components/solana/use-wallet-ui";
 import bs58 from "bs58";
-import { PublicKey } from "@solana/web3.js";
 
 export async function signWalletMessage(signMessage: (msg: Uint8Array) => Promise<Uint8Array>, message: string) {
     const encoded = new TextEncoder().encode(message);

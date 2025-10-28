@@ -42,44 +42,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { disconnect } = useMobileWallet()
   const { accounts, isLoading } = useAuthorization()
   const signInMutation = useSignInMutation()
-  const { getOrCreateAuthToken } = useAuthManager()
   const [token, setToken] = useState<string | null>(null);
-
-  console.log('auth provider loaded');
-
-  // useEffect(() => {
-  //   fetchToken();
-  // }, [accounts])
-
-
-  // const fetchToken = async () => {
-  //   if (accounts && accounts[0].address) {
-  //     try {
-  //       const walletAddress = accounts[0].publicKey;
-  //       const jwtToken = await getOrCreateAuthToken(walletAddress);
-  //       setToken(jwtToken);
-  //       console.log('Fetched JWT token:', jwtToken);
-  //     } catch (error) {
-  //       logger.error('AuthProvider', 'Error fetching JWT token', error);
-  //     }
-  //   } else {
-  //     setToken(null)
-  //   }
-  // }
 
   const value: AuthState = useMemo(
     () => ({
       signIn: async () => {
-        console.log('ca,ereher');
         const account = await signInMutation.mutateAsync()
 
-        try {
-          const walletAddress = account.publicKey.toBase58();
-          const jwtToken = await getOrCreateAuthToken(walletAddress);
-          setToken(jwtToken);
-        } catch (error) {
-          logger.error('AuthProvider', 'Error fetching JWT token', error);
-        }
+        // try {
+        //   const walletAddress = account.publicKey.toBase58();
+        //   const jwtToken = await getOrCreateAuthToken(walletAddress);
+        //   setToken(jwtToken);
+        // } catch (error) {
+        //   logger.error('AuthProvider', 'Error fetching JWT token', error);
+        // }
         return account
       },
       signOut: async () => {
