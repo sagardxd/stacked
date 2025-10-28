@@ -32,7 +32,7 @@ pub mod time_lock_escrow {
             ctx.accounts.system_program.to_account_info(),
             system_program::Transfer {
                 from: ctx.accounts.owner.to_account_info(),
-                to: ctx.accounts.escrow.to_account_info(),
+                to: escrow.to_account_info(),
             },
         );
         system_program::transfer(cpi_context, amount)?;
