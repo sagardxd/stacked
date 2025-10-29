@@ -5,9 +5,11 @@ import { StakingCardList } from '@/components/portfolio/StakingCardList'
 import { AppPage } from '@/components/app-page'
 import { SipAsset, StakingAsset } from '@/types/asset.types'
 import { useRouter } from 'expo-router'
+import { useStakingStore } from '@/store/staking.store'
 
 const Portfolio = () => {
   const router = useRouter();
+  const {totalBalance} = useStakingStore();
 
   const handleCardPress = (asset: StakingAsset | SipAsset) => {
     router.push('/(tabs)/portfolio/asset/1')
@@ -21,7 +23,7 @@ const Portfolio = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        <UserBalance balance={3000} />
+        <UserBalance balance={totalBalance} />
         
         <AppText type='button' style={styles.sectionTitle}>Staking Positions</AppText>
         <StakingCardList onCardPress={handleCardPress} />

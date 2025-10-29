@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { StakingCard } from './StakingCard';
 import { SipCard } from './SipCard';
-import { SipAsset, StakingAsset } from '@/types/asset.types';
+import { SipAsset, StakingAsset, Asset } from '@/types/asset.types';
 import { useEscrow } from '@/components/escrow/use-escrow';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
-
-// Demo data (mixed staking + sip
+import { useStakingStore } from '@/store/staking.store';
+import { useAssetStore } from '@/store/asset.store';
 
 interface StakingCardListProps {
     onCardPress?: (asset: StakingAsset | SipAsset) => void;
@@ -13,6 +13,13 @@ interface StakingCardListProps {
 
 export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress }) => {
     const { escrowAccounts } = useEscrow();
+    const { setPositions, setLoading, updateTotalBalance } = useStakingStore();
+    const getAsset = useAssetStore((state) => state.getAsset);
+
+    // Set loading state
+    useEffect(() => {
+        setLoading(escrowAccounts.isLoading || escrowAccounts.isFetching);
+    }, [escrowAccounts.isLoading, escrowAccounts.isFetching, setLoading]);
 
     // Convert escrow data array to StakingAsset format
     const lockedEscrowAssets = useMemo((): StakingAsset[] => {
@@ -32,12 +39,8 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                 const timeRemainingSeconds = Math.max(0, Math.floor((unlockTimeMs - now) / 1000));
                 const timeRemainingDays = Math.ceil(timeRemainingSeconds / (3600 * 24));
                 
-                // Estimate total duration (assuming lock was for ~1 year, but we'll use a reasonable estimate)
-                // Since we don't have creation time, we'll estimate based on typical lock duration
-                // Using a default of 365 days as estimate if we can't determine the actual duration
                 const estimatedTotalDays = Math.max(365, timeRemainingDays + 30); // At least what's left + buffer
                 
-                // Calculate progress: how much time has passed vs total estimated duration
                 // Progress = (totalDuration - timeRemaining) / totalDuration
                 const elapsedDays = estimatedTotalDays - timeRemainingDays;
                 const progress = Math.max(0, Math.min(1, elapsedDays / estimatedTotalDays));
@@ -58,8 +61,7 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                     symbol: 'SOL',
                     logo: 'solana',
                     maturityDate: maturityDateStr,
-                    // currentAPY is omitted (optional) for locked assets
-                    stakedAmount: stakedAmountSol, // Show staked amount instead of APY
+                    stakedAmount: stakedAmountSol, 
                     timeLeft: timeRemainingDays,
                     totalDuration: estimatedTotalDays,
                     progress: progress,
@@ -68,6 +70,38 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                 };
             });
     }, [escrowAccounts?.data]);
+
+    // Update positions in store when lockedEscrowAssets changes
+    useEffect(() => {
+        const storePositions = lockedEscrowAssets.map((asset) => ({
+            id: asset.id,
+            symbol: asset.symbol,
+            stakedAmount: asset.stakedAmount || 0,
+        }));
+        setPositions(storePositions);
+    }, [lockedEscrowAssets, setPositions]);
+
+    // Get asset prices from store to watch for changes
+    const assets = useAssetStore((state) => state.assets);
+
+    // Calculate and update total balance when positions or asset prices change
+    useEffect(() => {
+        if (lockedEscrowAssets.length === 0) {
+            updateTotalBalance(new Map());
+            return;
+        }
+
+        // Get SOL asset price
+        const solAsset = getAsset(Asset.SOL);
+        const solPrice = solAsset ? solAsset.currPrice / Math.pow(10, solAsset.decimal) : 0;
+
+        // Create price map
+        const assetPrices = new Map<string, number>();
+        assetPrices.set('SOL', solPrice);
+
+        // Update total balance
+        updateTotalBalance(assetPrices);
+    }, [lockedEscrowAssets, assets, getAsset, updateTotalBalance]);
 
     // Combine locked escrows with demo assets
     const allAssets = useMemo(() => {

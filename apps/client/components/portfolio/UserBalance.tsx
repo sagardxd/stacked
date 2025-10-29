@@ -21,9 +21,6 @@ const UserBalance: React.FC<UserBalanceProps> = ({ balance }) => {
   return (
     <AppView style={[styles.balanceContainer, {backgroundColor: cardBg}]}>
       <StaggeredCardNumber balance={displayBalance} />
-      {/* <AppText type='body' style={[styles.balanceBody, { color: accent }]}>+1.56% ($97.38)
-        <AppText type='body'> Overall</AppText>
-      </AppText> */}
     </AppView>
   )
 }
