@@ -1,7 +1,14 @@
 import { getRandomValues as expoCryptoGetRandomValues } from 'expo-crypto'
 import { Buffer } from 'buffer'
 
+// Ensure Buffer is properly polyfilled globally
 global.Buffer = Buffer
+if (typeof globalThis !== 'undefined') {
+  globalThis.Buffer = Buffer
+}
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer
+}
 
 // getRandomValues polyfill
 class Crypto {

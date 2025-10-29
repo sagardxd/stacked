@@ -40,12 +40,25 @@ export const StakingCard: React.FC<StakingCardProps> = ({ asset, onPress }) => {
           </View>
 
           <View style={styles.rightSection}>
-            <AppText type="caption" style={styles.apyLabel}>
-              Current Fixed APY
-            </AppText>
-            <AppText type="medium" style={[{ color: asset.color }]}>
-              {asset.currentAPY.toFixed(2)}%
-            </AppText>
+            {asset.currentAPY !== undefined ? (
+              <>
+                <AppText type="caption" style={styles.apyLabel}>
+                  Current Fixed APY
+                </AppText>
+                <AppText type="medium" style={[{ color: asset.color }]}>
+                  {asset.currentAPY.toFixed(2)}%
+                </AppText>
+              </>
+            ) : asset.stakedAmount !== undefined ? (
+              <>
+                <AppText type="caption" style={styles.apyLabel}>
+                  Staked Amount
+                </AppText>
+                <AppText type="medium" style={[{ color: asset.color }]}>
+                  {asset.stakedAmount.toFixed(2)} {asset.symbol}
+                </AppText>
+              </>
+            ) : null}
           </View>
         </View>
 

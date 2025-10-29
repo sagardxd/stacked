@@ -66,8 +66,6 @@ const Lock = () => {
 
     const hanndleComplete = async () => {
         try {
-            logger.info('🔒 Starting asset lock process...');
-
             // Validate inputs
             if (!quantity || parseFloat(quantity) <= 0) {
                 logger.error('hanndleComplete', 'Invalid amount', 'Amount must be greater than 0');
@@ -75,7 +73,7 @@ const Lock = () => {
             }
 
             // Convert duration to seconds
-            const secondsInMonth = 30 * 24 * 60 * 60; // ~30 days
+            const secondsInMonth = 30 * 24 * 60 * 60;
             const secondsInYear = 365 * 24 * 60 * 60;
             const durationInSeconds = durationUnit === 'Months'
                 ? duration * secondsInMonth
@@ -84,29 +82,19 @@ const Lock = () => {
             // Convert SOL to lamports
             const amountInLamports = Math.floor(parseFloat(quantity) * LAMPORTS_PER_SOL);
 
-            logger.info(`📊 Lock Details:
-- Amount: ${quantity} SOL (${amountInLamports} lamports)
-- Duration: ${duration} ${durationUnit} (${durationInSeconds} seconds)
-- Unlock Date: ${new Date(Date.now() + durationInSeconds * 1000).toLocaleString()}`);
-
-            // Initialize the escrow
-            logger.info('⏳ Submitting transaction to blockchain...');
             const signature = await initializeEscrow.mutateAsync({
                 amount: amountInLamports,
                 lockDurationSeconds: durationInSeconds,
             });
 
-            logger.info(`✅ Asset lock successful!
-- Transaction Signature: ${signature}
-- Amount Locked: ${quantity} SOL
-- Unlock Time: ${new Date(Date.now() + durationInSeconds * 1000).toLocaleString()}`);
+            logger.info(`Asset locked: ${quantity} SOL for ${duration} ${durationUnit} - ${signature}`);
 
             setTransactionCompleted(true);
             completed.value = true;
 
-            // Navigate back after success
+            // Navigate to home screen after successful lock
             setTimeout(() => {
-                router.back();
+                router.replace('/(tabs)/home');
             }, 2000);
 
         } catch (error: any) {
@@ -163,7 +151,7 @@ const Lock = () => {
                         handleColor={'#000000'}
                         baseColor={text + '10'}
                         aboveText="locking assets..."
-                        finalText={transactionCompleted ? "Success!" : "Intialized..."}
+                        finalText={transactionCompleted ? "Success!" : "Initialized..."}
                         shimmerTextProps={{
                             text: 'Slide to lock',
                             speed: 4000,

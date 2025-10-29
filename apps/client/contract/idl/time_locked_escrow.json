@@ -1,5 +1,5 @@
 {
-  "address": "DCeZL4KzUhkEqefebaw3nCTCtEo58n4Dz8C8GWNWebG6",
+  "address": "CsDdFwNH8mW29B5LMq2VnBfENw7e6VrWVMygEMMMSpsM",
   "metadata": {
     "name": "time_locked_escrow",
     "version": "0.1.0",
@@ -39,6 +39,10 @@
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrow_id"
               }
             ]
           }
@@ -86,6 +90,37 @@
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrow_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
               }
             ]
           }
@@ -101,6 +136,10 @@
         }
       ],
       "args": [
+        {
+          "name": "escrow_id",
+          "type": "u64"
+        },
         {
           "name": "amount",
           "type": "u64"
@@ -143,6 +182,10 @@
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrow_id"
               }
             ]
           }
@@ -176,6 +219,19 @@
         218,
         155
       ]
+    },
+    {
+      "name": "UserState",
+      "discriminator": [
+        72,
+        177,
+        85,
+        249,
+        76,
+        167,
+        186,
+        126
+      ]
     }
   ],
   "errors": [
@@ -203,6 +259,11 @@
       "code": 6004,
       "name": "MustWithdrawFirst",
       "msg": "Must withdraw funds before closing escrow"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidEscrowId",
+      "msg": "Invalid escrow ID. Must match the current escrow count."
     }
   ],
   "types": [
@@ -224,8 +285,24 @@
             "type": "i64"
           },
           {
+            "name": "escrow_id",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "escrow_count",
+            "type": "u64"
           }
         ]
       }

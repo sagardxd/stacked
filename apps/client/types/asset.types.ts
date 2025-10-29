@@ -23,7 +23,8 @@ interface PortfolioAsset {
 
 export interface StakingAsset extends PortfolioAsset {
     maturityDate: string;
-    currentAPY: number;
+    currentAPY?: number; // Made optional for locked assets without APY
+    stakedAmount?: number; // SOL amount staked (shown when APY is not available)
     timeLeft: number;
     totalDuration: number;
     progress: number;

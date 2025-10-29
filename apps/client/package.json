@@ -36,6 +36,7 @@
   "main": "./index.js",
   "version": "1.0.0",
   "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
     "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^5",
     "@react-native-async-storage/async-storage": "2.1.2",
@@ -56,6 +57,7 @@
     "@types/axios": "^0.14.4",
     "@wallet-standard/core": "^1.1.1",
     "axios": "^1.12.2",
+    "buffer": "^6.0.3",
     "expo": "~53.0.22",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",

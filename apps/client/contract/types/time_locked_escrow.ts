@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/time_locked_escrow.json`.
  */
 export type TimeLockedEscrow = {
-  "address": "DCeZL4KzUhkEqefebaw3nCTCtEo58n4Dz8C8GWNWebG6",
+  "address": "CsDdFwNH8mW29B5LMq2VnBfENw7e6VrWVMygEMMMSpsM",
   "metadata": {
     "name": "timeLockedEscrow",
     "version": "0.1.0",
@@ -45,6 +45,10 @@ export type TimeLockedEscrow = {
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrowId"
               }
             ]
           }
@@ -92,6 +96,37 @@ export type TimeLockedEscrow = {
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrowId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "userState",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
               }
             ]
           }
@@ -107,6 +142,10 @@ export type TimeLockedEscrow = {
         }
       ],
       "args": [
+        {
+          "name": "escrowId",
+          "type": "u64"
+        },
         {
           "name": "amount",
           "type": "u64"
@@ -149,6 +188,10 @@ export type TimeLockedEscrow = {
               {
                 "kind": "account",
                 "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "escrowId"
               }
             ]
           }
@@ -182,6 +225,19 @@ export type TimeLockedEscrow = {
         218,
         155
       ]
+    },
+    {
+      "name": "userState",
+      "discriminator": [
+        72,
+        177,
+        85,
+        249,
+        76,
+        167,
+        186,
+        126
+      ]
     }
   ],
   "errors": [
@@ -209,6 +265,11 @@ export type TimeLockedEscrow = {
       "code": 6004,
       "name": "mustWithdrawFirst",
       "msg": "Must withdraw funds before closing escrow"
+    },
+    {
+      "code": 6005,
+      "name": "invalidEscrowId",
+      "msg": "Invalid escrow ID. Must match the current escrow count."
     }
   ],
   "types": [
@@ -230,8 +291,24 @@ export type TimeLockedEscrow = {
             "type": "i64"
           },
           {
+            "name": "escrowId",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "userState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "escrowCount",
+            "type": "u64"
           }
         ]
       }
