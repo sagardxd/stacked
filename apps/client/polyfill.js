@@ -19,3 +19,10 @@ const webCrypto = typeof crypto !== 'undefined' ? crypto : new Crypto()
     })
   }
 })()
+
+// structuredClone polyfill for React Native
+if (typeof global.structuredClone === 'undefined') {
+  global.structuredClone = function structuredClone(obj) {
+    return JSON.parse(JSON.stringify(obj))
+  }
+}

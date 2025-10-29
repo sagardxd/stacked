@@ -1,113 +1,110 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
-declare_id!("11111111111111111111111111111111");
+// TODO: Update this with your actual program ID after deployment
+// Run: solana address -k target/deploy/contracts-keypair.json
+declare_id!("HCjF66qz1xg7mkAhM4opqJZ8av52PkN2fWjM3rEopQTr");
 
 #[program]
-pub mod time_lock_escrow {
+pub mod time_locked_escrow {
     use super::*;
 
-    /// Initialize a new time-locked escrow
     pub fn initialize_escrow(
         ctx: Context<InitializeEscrow>,
         amount: u64,
         lock_duration_seconds: i64,
     ) -> Result<()> {
-        require!(amount > 0, ErrorCode::InvalidAmount);
-        require!(lock_duration_seconds > 0, ErrorCode::InvalidDuration);
-
-        let escrow = &mut ctx.accounts.escrow;
         let clock = Clock::get()?;
 
-        escrow.owner = ctx.accounts.owner.key();
-        escrow.amount = amount;
-        escrow.lock_start = clock.unix_timestamp;
-        escrow.lock_duration = lock_duration_seconds;
-        escrow.unlock_time = clock.unix_timestamp + lock_duration_seconds;
-        escrow.is_withdrawn = false;
-        escrow.bump = ctx.bumps.escrow;
+        require!(amount > 0, EscrowError::InvalidAmount);
+        require!(lock_duration_seconds > 0, EscrowError::InvalidDuration);
 
-        // Transfer SOL from user to escrow PDA
+        // Transfer SOL from user to escrow PDA first
         let cpi_context = CpiContext::new(
             ctx.accounts.system_program.to_account_info(),
             system_program::Transfer {
-                from: ctx.accounts.owner.to_account_info(),
-                to: escrow.to_account_info(),
+                from: ctx.accounts.user.to_account_info(),
+                to: ctx.accounts.escrow.to_account_info(),
             },
         );
         system_program::transfer(cpi_context, amount)?;
 
+        // Initialize escrow state (account already created by 'init')
+        let escrow = &mut ctx.accounts.escrow;
+        escrow.user = ctx.accounts.user.key();
+        escrow.amount = amount;
+        escrow.unlock_time = clock.unix_timestamp + lock_duration_seconds;
+        escrow.bump = ctx.bumps.escrow;
+
         msg!("Escrow initialized!");
-        msg!("Owner: {}", escrow.owner);
-        msg!("Amount locked: {} lamports", escrow.amount);
-        msg!("Lock duration: {} seconds", escrow.lock_duration);
+        msg!("Amount locked: {} lamports", amount);
         msg!("Unlock time: {}", escrow.unlock_time);
 
         Ok(())
     }
 
-    /// Withdraw funds after the lock period has expired
     pub fn withdraw(ctx: Context<Withdraw>) -> Result<()> {
-        let escrow = &mut ctx.accounts.escrow;
         let clock = Clock::get()?;
+        let escrow = &ctx.accounts.escrow;
 
-        require!(!escrow.is_withdrawn, ErrorCode::AlreadyWithdrawn);
+        // Check if unlock time has passed
         require!(
             clock.unix_timestamp >= escrow.unlock_time,
-            ErrorCode::StillLocked
+            EscrowError::StillLocked
         );
 
-        let amount = escrow.amount;
-        escrow.is_withdrawn = true;
+        // Check if there are funds to withdraw
+        require!(escrow.amount > 0, EscrowError::NoFundsToWithdraw);
 
-        // Transfer SOL from escrow PDA back to owner
-        **ctx.accounts.escrow.to_account_info().try_borrow_mut_lamports()? -= amount;
-        **ctx.accounts.owner.to_account_info().try_borrow_mut_lamports()? += amount;
+        let amount = escrow.amount;
+        let user_key = escrow.user;
+        let bump = escrow.bump;
+
+        // Transfer SOL back to user
+        let seeds = &[
+            b"escrow",
+            user_key.as_ref(),
+            &[bump],
+        ];
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_context = CpiContext::new_with_signer(
+            ctx.accounts.system_program.to_account_info(),
+            system_program::Transfer {
+                from: ctx.accounts.escrow.to_account_info(),
+                to: ctx.accounts.user.to_account_info(),
+            },
+            signer_seeds,
+        );
+        system_program::transfer(cpi_context, amount)?;
+
+        // Update state to reflect withdrawal
+        ctx.accounts.escrow.amount = 0;
 
         msg!("Withdrawal successful!");
         msg!("Amount withdrawn: {} lamports", amount);
-        msg!("To: {}", ctx.accounts.owner.key());
 
         Ok(())
     }
 
-    /// Close the escrow account and return rent (only after withdrawal)
     pub fn close_escrow(ctx: Context<CloseEscrow>) -> Result<()> {
         let escrow = &ctx.accounts.escrow;
-        
-        require!(escrow.is_withdrawn, ErrorCode::NotWithdrawn);
-
-        msg!("Escrow account closed!");
-        msg!("Rent returned to: {}", ctx.accounts.owner.key());
-
-        Ok(())
-    }
-
-    /// Get escrow information (view function)
-    pub fn get_escrow_info(ctx: Context<GetEscrowInfo>) -> Result<()> {
-        let escrow = &ctx.accounts.escrow;
         let clock = Clock::get()?;
-        
-        msg!("=== Escrow Information ===");
-        msg!("Owner: {}", escrow.owner);
-        msg!("Amount: {} lamports ({} SOL)", escrow.amount, escrow.amount as f64 / 1_000_000_000.0);
-        msg!("Lock Start: {}", escrow.lock_start);
-        msg!("Lock Duration: {} seconds", escrow.lock_duration);
-        msg!("Unlock Time: {}", escrow.unlock_time);
-        msg!("Current Time: {}", clock.unix_timestamp);
-        msg!("Is Withdrawn: {}", escrow.is_withdrawn);
-        
-        if !escrow.is_withdrawn {
-            let time_remaining = escrow.unlock_time - clock.unix_timestamp;
-            if time_remaining > 0 {
-                msg!("Time Remaining: {} seconds ({} days)", time_remaining, time_remaining / 86400);
-            } else {
-                msg!("Status: Ready to withdraw!");
-            }
-        } else {
-            msg!("Status: Already withdrawn");
-        }
-        
+
+        // Ensure time has passed
+        require!(
+            clock.unix_timestamp >= escrow.unlock_time,
+            EscrowError::StillLocked
+        );
+
+        // Ensure all funds have been withdrawn
+        require!(
+            escrow.amount == 0,
+            EscrowError::MustWithdrawFirst
+        );
+
+        msg!("Escrow closed successfully!");
+
         Ok(())
     }
 }
@@ -116,15 +113,15 @@ pub mod time_lock_escrow {
 pub struct InitializeEscrow<'info> {
     #[account(
         init,
-        payer = owner,
+        payer = user,
         space = 8 + Escrow::INIT_SPACE,
-        seeds = [b"escrow", owner.key().as_ref()],
+        seeds = [b"escrow", user.key().as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
     
     #[account(mut)]
-    pub owner: Signer<'info>,
+    pub user: Signer<'info>,
     
     pub system_program: Program<'info, System>,
 }
@@ -133,68 +130,52 @@ pub struct InitializeEscrow<'info> {
 pub struct Withdraw<'info> {
     #[account(
         mut,
-        seeds = [b"escrow", owner.key().as_ref()],
+        seeds = [b"escrow", user.key().as_ref()],
         bump = escrow.bump,
-        has_one = owner
+        has_one = user
     )]
     pub escrow: Account<'info, Escrow>,
     
     #[account(mut)]
-    pub owner: Signer<'info>,
+    pub user: Signer<'info>,
+    
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct CloseEscrow<'info> {
     #[account(
         mut,
-        seeds = [b"escrow", owner.key().as_ref()],
+        seeds = [b"escrow", user.key().as_ref()],
         bump = escrow.bump,
-        has_one = owner,
-        close = owner
+        has_one = user,
+        close = user
     )]
     pub escrow: Account<'info, Escrow>,
     
     #[account(mut)]
-    pub owner: Signer<'info>,
-}
-
-#[derive(Accounts)]
-pub struct GetEscrowInfo<'info> {
-    #[account(
-        seeds = [b"escrow", owner.key().as_ref()],
-        bump = escrow.bump,
-    )]
-    pub escrow: Account<'info, Escrow>,
-    
-    pub owner: Signer<'info>,
+    pub user: Signer<'info>,
 }
 
 #[account]
 #[derive(InitSpace)]
 pub struct Escrow {
-    pub owner: Pubkey,           // 32 bytes
-    pub amount: u64,             // 8 bytes
-    pub lock_start: i64,         // 8 bytes
-    pub lock_duration: i64,      // 8 bytes
-    pub unlock_time: i64,        // 8 bytes
-    pub is_withdrawn: bool,      // 1 byte
-    pub bump: u8,                // 1 byte
+    pub user: Pubkey,           // 32 bytes
+    pub amount: u64,            // 8 bytes
+    pub unlock_time: i64,       // 8 bytes
+    pub bump: u8,               // 1 byte
 }
 
 #[error_code]
-pub enum ErrorCode {
+pub enum EscrowError {
     #[msg("Amount must be greater than 0")]
     InvalidAmount,
-    
     #[msg("Lock duration must be greater than 0")]
     InvalidDuration,
-    
-    #[msg("Funds are still locked. Cannot withdraw yet.")]
+    #[msg("Funds are still locked. Please wait until unlock time.")]
     StillLocked,
-    
-    #[msg("Funds have already been withdrawn")]
-    AlreadyWithdrawn,
-    
+    #[msg("No funds available to withdraw")]
+    NoFundsToWithdraw,
     #[msg("Must withdraw funds before closing escrow")]
-    NotWithdrawn,
+    MustWithdrawFirst,
 }
