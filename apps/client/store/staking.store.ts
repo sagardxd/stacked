@@ -21,18 +21,17 @@ export const useStakingStore = create<StakingStore>((set, get) => ({
     totalBalance: 0,
     setPositions: (positions) => {
         set({ positions });
-        // Recalculate balance when positions change
-        const { updateTotalBalance } = get();
-        // We'll call updateTotalBalance from the component with asset prices
     },
-    setLoading: (loading) => set({ isLoading: loading }),
+    setLoading: (loading) => {
+        set({ isLoading: loading });
+    },
     updateTotalBalance: (assetPrices) => {
         const { positions } = get();
         let total = 0;
         
         positions.forEach((position) => {
             const price = assetPrices.get(position.symbol);
-            if (price) {
+            if (price !== undefined && price > 0) {
                 total += position.stakedAmount * price;
             }
         });

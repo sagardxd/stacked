@@ -1,11 +1,13 @@
 import React, { useMemo, useEffect } from 'react';
 import { StakingCard } from './StakingCard';
 import { SipCard } from './SipCard';
-import { SipAsset, StakingAsset, Asset } from '@/types/asset.types';
+import { SipAsset, StakingAsset } from '@/types/asset.types';
 import { useEscrow } from '@/components/escrow/use-escrow';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
 import { useStakingStore } from '@/store/staking.store';
-import { useAssetStore } from '@/store/asset.store';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { useThemeColor } from '@/hooks/use-theme-color';
+import { AppText } from '@/components/app-text';
 
 interface StakingCardListProps {
     onCardPress?: (asset: StakingAsset | SipAsset) => void;
@@ -13,12 +15,13 @@ interface StakingCardListProps {
 
 export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress }) => {
     const { escrowAccounts } = useEscrow();
-    const { setPositions, setLoading, updateTotalBalance } = useStakingStore();
-    const getAsset = useAssetStore((state) => state.getAsset);
+    const { setPositions, setLoading, isLoading } = useStakingStore();
+    const cardBg = useThemeColor({}, 'cardBg');
 
     // Set loading state
     useEffect(() => {
-        setLoading(escrowAccounts.isLoading || escrowAccounts.isFetching);
+        const loading = escrowAccounts.isLoading || escrowAccounts.isFetching;
+        setLoading(loading);
     }, [escrowAccounts.isLoading, escrowAccounts.isFetching, setLoading]);
 
     // Convert escrow data array to StakingAsset format
@@ -68,7 +71,10 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                     color: '#50C4AC',
                     imageLink: 'https://res.cloudinary.com/dpk1nbczk/image/upload/v1759233401/solana-logo_s566xz.png'
                 };
-            });
+            })
+            .filter((asset) => (asset.stakedAmount || 0) > 0);
+        
+        return lockedEscrowAssets;
     }, [escrowAccounts?.data]);
 
     // Update positions in store when lockedEscrowAssets changes
@@ -81,27 +87,6 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
         setPositions(storePositions);
     }, [lockedEscrowAssets, setPositions]);
 
-    // Get asset prices from store to watch for changes
-    const assets = useAssetStore((state) => state.assets);
-
-    // Calculate and update total balance when positions or asset prices change
-    useEffect(() => {
-        if (lockedEscrowAssets.length === 0) {
-            updateTotalBalance(new Map());
-            return;
-        }
-
-        // Get SOL asset price
-        const solAsset = getAsset(Asset.SOL);
-        const solPrice = solAsset ? solAsset.currPrice / Math.pow(10, solAsset.decimal) : 0;
-
-        // Create price map
-        const assetPrices = new Map<string, number>();
-        assetPrices.set('SOL', solPrice);
-
-        // Update total balance
-        updateTotalBalance(assetPrices);
-    }, [lockedEscrowAssets, assets, getAsset, updateTotalBalance]);
 
     // Combine locked escrows with demo assets
     const allAssets = useMemo(() => {
@@ -114,6 +99,15 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
         
         return assets;
     }, [lockedEscrowAssets]);
+
+    if (isLoading) {
+        return (
+            <View style={[styles.loadingContainer, { backgroundColor: cardBg }]}>
+                <ActivityIndicator size="large" color="#50C4AC" />
+                <AppText type="caption" style={styles.loadingText}>Loading staking positions...</AppText>
+            </View>
+        );
+    }
 
     return (
         <>
@@ -135,3 +129,17 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
         </>
     );
 };
+
+const styles = StyleSheet.create({
+    loadingContainer: {
+        padding: 40,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20,
+    },
+    loadingText: {
+        marginTop: 12,
+        textAlign: 'center',
+    },
+});

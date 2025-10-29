@@ -125,7 +125,6 @@ export function useEscrow() {
         try {
           const currentEscrowId = new BN(i);
           const [escrowPDA] = getEscrowPDA(currentEscrowId);
-          
           const accountInfo = await connection.getAccountInfo(escrowPDA);
           if (!accountInfo) {
             continue;
