@@ -1,9 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
-// TODO: Update this with your actual program ID after deployment
-// Run: solana address -k target/deploy/contracts-keypair.json
-declare_id!("HCjF66qz1xg7mkAhM4opqJZ8av52PkN2fWjM3rEopQTr");
+
+declare_id!("DCeZL4KzUhkEqefebaw3nCTCtEo58n4Dz8C8GWNWebG6");
 
 #[program]
 pub mod time_locked_escrow {

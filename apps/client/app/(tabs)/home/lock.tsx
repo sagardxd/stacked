@@ -16,6 +16,9 @@ import SummarySection from '@/components/ui/SummarySection';
 import { useWalletUi } from '@/components/solana/use-wallet-ui';
 import { useGetBalance } from '@/components/account/use-get-balance';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
+import { useEscrow } from '@/components/escrow/use-escrow';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { logger } from '@/utils/logger.service';
 
 const Lock = () => {
     const router = useRouter();
@@ -25,6 +28,9 @@ const Lock = () => {
     const completed = useSharedValue(false);
     const text = useThemeColor({}, "text");
     const accent = useThemeColor({}, "accent");
+
+    // Escrow hook for locking assets
+    const { initializeEscrow } = useEscrow();
 
     const [quantity, setQuantity] = useState('');
     const [transactionCompleted, setTransactionCompleted] = useState(false)
@@ -60,10 +66,53 @@ const Lock = () => {
 
     const hanndleComplete = async () => {
         try {
-            const encoded = new TextEncoder().encode(JSON.stringify({ message: "locking asset" }));
-            await signMessage(encoded)
-        } catch {
+            logger.info('🔒 Starting asset lock process...');
 
+            // Validate inputs
+            if (!quantity || parseFloat(quantity) <= 0) {
+                logger.error('hanndleComplete', 'Invalid amount', 'Amount must be greater than 0');
+                return;
+            }
+
+            // Convert duration to seconds
+            const secondsInMonth = 30 * 24 * 60 * 60; // ~30 days
+            const secondsInYear = 365 * 24 * 60 * 60;
+            const durationInSeconds = durationUnit === 'Months'
+                ? duration * secondsInMonth
+                : duration * secondsInYear;
+
+            // Convert SOL to lamports
+            const amountInLamports = Math.floor(parseFloat(quantity) * LAMPORTS_PER_SOL);
+
+            logger.info(`📊 Lock Details:
+- Amount: ${quantity} SOL (${amountInLamports} lamports)
+- Duration: ${duration} ${durationUnit} (${durationInSeconds} seconds)
+- Unlock Date: ${new Date(Date.now() + durationInSeconds * 1000).toLocaleString()}`);
+
+            // Initialize the escrow
+            logger.info('⏳ Submitting transaction to blockchain...');
+            const signature = await initializeEscrow.mutateAsync({
+                amount: amountInLamports,
+                lockDurationSeconds: durationInSeconds,
+            });
+
+            logger.info(`✅ Asset lock successful!
+- Transaction Signature: ${signature}
+- Amount Locked: ${quantity} SOL
+- Unlock Time: ${new Date(Date.now() + durationInSeconds * 1000).toLocaleString()}`);
+
+            setTransactionCompleted(true);
+            completed.value = true;
+
+            // Navigate back after success
+            setTimeout(() => {
+                router.back();
+            }, 2000);
+
+        } catch (error: any) {
+            logger.error('hanndleComplete', 'Failed to lock assets', error?.message || error);
+            completed.value = false;
+            setTransactionCompleted(false);
         }
     }
 

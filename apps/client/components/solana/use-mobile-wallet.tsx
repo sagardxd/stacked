@@ -17,7 +17,6 @@ export function useMobileWallet() {
 
   const signIn = useCallback(
     async (signInPayload: SignInPayload): Promise<Account> => {
-    console.log('insdie sign')
 
       return await transact(async (wallet) => {
         return await authorizeSessionWithSignIn(wallet, signInPayload)
@@ -27,7 +26,6 @@ export function useMobileWallet() {
   )
 
   const disconnect = useCallback(async (): Promise<void> => {
-     console.log('de authorizing the token');
     await deauthorizeSessions()
   }, [deauthorizeSessions])
 
@@ -45,16 +43,30 @@ export function useMobileWallet() {
     [authorizeSession],
   )
 
+  const signTransactions = useCallback(
+    async <T extends Transaction | VersionedTransaction>(
+      transactions: T[]
+    ): Promise<T[]> => {
+      return await transact(async (wallet) => {
+        await authorizeSession(wallet);
+        const signedTransactions = await wallet.signTransactions({
+          transactions,
+        });
+        return signedTransactions;
+      });
+    },
+    [authorizeSession]
+  );
+
+
   const signMessage = useCallback(
     async (message: Uint8Array): Promise<Uint8Array> => {
       return await transact(async (wallet) => {
         const authResult = await authorizeSession(wallet)
-        console.log('authresult ', authResult.address);
         const signedMessages = await wallet.signMessages({
           addresses: [authResult.address],
           payloads: [message],
         })
-        console.log('singned msg', signedMessages);
         return signedMessages[0]
       })
     },
@@ -119,7 +131,6 @@ const signJwt = useCallback(async () => {
   }
 }, [authorizeSession]);
 
-
   return useMemo(
     () => ({
       connect,
@@ -127,8 +138,9 @@ const signJwt = useCallback(async () => {
       disconnect,
       signAndSendTransaction,
       signMessage,
-      signJwt
+      signJwt,
+      signTransactions
     }),
-    [connect, disconnect, signAndSendTransaction, signIn, signMessage, signJwt],
+    [connect, disconnect, signAndSendTransaction, signIn, signMessage, signJwt, signTransactions],
   )
 }
