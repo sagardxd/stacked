@@ -24,7 +24,7 @@ export function WalletConnection() {
                       'Custom'
 
   return (
-    <AppView style={[styles.container, {  borderColor: border }]}>
+    <AppView style={[styles.container, { backgroundColor: cardBg, borderColor: border }]}>
       <AppText type="button" style={styles.title}>
         Wallet Connection
       </AppText>
@@ -76,7 +76,6 @@ export function WalletConnection() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
