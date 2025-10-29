@@ -32,7 +32,7 @@ export const CardInfo: FC<CardInfoProps> = memo(({ cardNumber }) => {
 
   return (
     <View style={[styles.container]}>
-      <View>
+      <View style={styles.balanceContent}>
         <AppText type="body" style={[styles.title, {color: text + '99'}]}>Balance</AppText>
         <View style={styles.numbers}>
           {splittedNumber.map((number, index) => {
@@ -52,7 +52,6 @@ export const CardInfo: FC<CardInfoProps> = memo(({ cardNumber }) => {
           })}
         </View>
       </View>
-      <View style={{ flex: 1 }} />
       <TouchableFeedback onTap={onToggle} style={styles.button}>
         <Feather name={toggled ? 'eye' : 'eye-off'} size={24} color="#38a27b" />
       </TouchableFeedback>
@@ -67,18 +66,27 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 10,
     flexDirection: 'row',
+    width: '100%',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  balanceContent: {
+    flex: 1,
   },
   title: {
   },
   button: {
-    height: '100%',
-    aspectRatio: 1,
+    width: 40,
+    height: 40,
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 15,
   },
   numbers: {
     flexDirection: 'row',
     marginTop: 5,
+    overflow: 'hidden',
   },
 });

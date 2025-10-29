@@ -16,17 +16,11 @@ const Portfolio = () => {
   return (
     <AppPage>
       <AppText type='medium' style={styles.header}>Portfolio</AppText>
-      <ScrollView
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <UserBalance />
-        
-        <AppText type='button' style={styles.sectionTitle}>Staking Positions</AppText>
+      <UserBalance />
+      <AppText type='button' style={styles.sectionTitle}>Staking Positions</AppText>
+
         <StakingCardList onCardPress={handleCardPress} />
 
-      </ScrollView>
     </AppPage>
   )
 }
@@ -45,12 +39,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginTop: 20,
-    marginBottom: 10,
-  },
-  container: {
-  },
-  contentContainer: {
-    paddingVertical: 8,
   },
 })
 

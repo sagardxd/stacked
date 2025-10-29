@@ -54,6 +54,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     borderRadius: 12,
+    width: '100%',
+    overflow: 'hidden',
   },
   balanceText: {
     fontWeight: '700'

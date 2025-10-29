@@ -30,7 +30,7 @@ const AssetHeader: React.FC<AssetHeaderProps> = ({ asset }) => {
 
         const connectWebSocket = () => {
             try {
-                socket = new WebSocket('ws://fdeba8bd7ec4.ngrok-free.app');
+                socket = new WebSocket('ws://18bdf509bfe8.ngrok-free.app');
                 logger.info('Attempting WebSocket connection...');
 
                 socket.onopen = () => {

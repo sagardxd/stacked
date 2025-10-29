@@ -5,7 +5,7 @@ import { SipAsset, StakingAsset } from '@/types/asset.types';
 import { useEscrow } from '@/components/escrow/use-escrow';
 import { lamportsToSol } from '@/utils/lamports-to-sol';
 import { useStakingStore } from '@/store/staking.store';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, ScrollView } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { AppText } from '@/components/app-text';
 
@@ -110,7 +110,7 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
     }
 
     return (
-        <>
+        <ScrollView contentContainerStyle={{paddingBottom: 150}} showsVerticalScrollIndicator={false}>
             {allAssets.map((asset: StakingAsset | SipAsset) => (
                 'maturityDate' in asset ? (
                     <StakingCard
@@ -126,7 +126,7 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                     />
                 )
             ))}
-        </>
+        </ScrollView>
     );
 };
 
