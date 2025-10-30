@@ -10,7 +10,9 @@ const Portfolio = () => {
   const router = useRouter();
 
   const handleCardPress = (asset: StakingAsset | SipAsset) => {
-    router.push('/(tabs)/portfolio/asset/1')
+    // Extract the escrow ID from the asset ID (format: "locked-escrow-{id}")
+    const escrowId = asset.id.replace('locked-escrow-', '');
+    router.push(`/(tabs)/portfolio/asset/${escrowId}` as any);
   };
 
   return (
