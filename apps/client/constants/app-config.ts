@@ -15,7 +15,7 @@ export class AppConfig {
     {
       id: 'solana:devnet',
       name: 'Devnet',
-      endpoint: clusterApiUrl('devnet'),
+      endpoint: process.env.EXPO_PUBLIC_SOLANA_RPC_URL || clusterApiUrl('devnet'),
       network: ClusterNetwork.Devnet,
     },
     {

@@ -8,6 +8,8 @@ import AssetPrice from '@/components/asset/AssetPrice'
 import { AppText } from '../app-text'
 import { logger } from '@/utils/logger.service';
 
+const WS_URL = process.env.EXPO_PUBLIC_WS_URL
+
 
 interface AssetHeaderProps {
     asset: Asset
@@ -30,7 +32,7 @@ const AssetHeader: React.FC<AssetHeaderProps> = ({ asset }) => {
 
         const connectWebSocket = () => {
             try {
-                socket = new WebSocket('ws://18bdf509bfe8.ngrok-free.app');
+                socket = new WebSocket(WS_URL!);
                 logger.info('Attempting WebSocket connection...');
 
                 socket.onopen = () => {
