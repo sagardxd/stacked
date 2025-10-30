@@ -42,7 +42,42 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
                 const timeRemainingSeconds = Math.max(0, Math.floor((unlockTimeMs - now) / 1000));
                 const timeRemainingDays = Math.ceil(timeRemainingSeconds / (3600 * 24));
                 
-                const estimatedTotalDays = Math.max(365, timeRemainingDays + 30); // At least what's left + buffer
+                // Without the creation time stored on-chain, we need to estimate the total duration
+                // We'll use a smarter heuristic based on common lock periods
+                let estimatedTotalDays: number;
+                
+                // If unlock is in the future, estimate based on time remaining
+                if (timeRemainingDays > 0) {
+                    // Round up to common lock periods: 1,2,3,5,8,10,12 months or 1,2,3,5,10 years
+                    const monthsRemaining = timeRemainingDays / 30;
+                    
+                    if (monthsRemaining <= 1.5) {
+                        estimatedTotalDays = 30;  // 1 month
+                    } else if (monthsRemaining <= 2.5) {
+                        estimatedTotalDays = 60;  // 2 months
+                    } else if (monthsRemaining <= 4) {
+                        estimatedTotalDays = 90;  // 3 months
+                    } else if (monthsRemaining <= 6.5) {
+                        estimatedTotalDays = 150; // 5 months
+                    } else if (monthsRemaining <= 9) {
+                        estimatedTotalDays = 240; // 8 months
+                    } else if (monthsRemaining <= 11) {
+                        estimatedTotalDays = 300; // 10 months
+                    } else if (monthsRemaining <= 15) {
+                        estimatedTotalDays = 365; // 12 months (1 year)
+                    } else if (monthsRemaining <= 27) {
+                        estimatedTotalDays = 730; // 2 years
+                    } else if (monthsRemaining <= 42) {
+                        estimatedTotalDays = 1095; // 3 years
+                    } else if (monthsRemaining <= 66) {
+                        estimatedTotalDays = 1825; // 5 years
+                    } else {
+                        estimatedTotalDays = 3650; // 10 years
+                    }
+                } else {
+                    // Already unlocked - use minimum duration
+                    estimatedTotalDays = 30;
+                }
                 
                 // Progress = (totalDuration - timeRemaining) / totalDuration
                 const elapsedDays = estimatedTotalDays - timeRemainingDays;

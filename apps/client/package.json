@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "Stacked",
   "scripts": {
     "android": "expo run:android",
     "android:build": "expo prebuild -p android",
