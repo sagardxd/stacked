@@ -22,7 +22,7 @@ import { logger } from '@/utils/logger.service';
 
 const Lock = () => {
     const router = useRouter();
-    const { signMessage, account } = useWalletUi()
+    const {          account } = useWalletUi()
     const userBalance = useGetBalance({ address: account!.publicKey })
     const finalUserBalance = userBalance.data ? lamportsToSol(userBalance.data) : 0
     const completed = useSharedValue(false);
@@ -36,6 +36,12 @@ const Lock = () => {
     const [transactionCompleted, setTransactionCompleted] = useState(false)
     const [durationUnit, setDurationUnit] = useState<'Months' | 'Years'>('Years');
     const [duration, setDuration] = useState<number>(1);
+
+    // Check if input is valid for locking
+    const isValidInput = () => {
+        const amount = parseFloat(quantity);
+        return quantity !== '' && amount > 0 && amount <= finalUserBalance;
+    };
 
     const handleDurationChange = (newDuration: number) => {
         setDuration(newDuration);
@@ -65,10 +71,21 @@ const Lock = () => {
     }
 
     const hanndleComplete = async () => {
+        // Prevent execution if input is invalid
+        if (!isValidInput()) {
+            logger.error('hanndleComplete', 'Invalid input', 'Please enter a valid amount');
+            return;
+        }
+
         try {
             // Validate inputs
             if (!quantity || parseFloat(quantity) <= 0) {
                 logger.error('hanndleComplete', 'Invalid amount', 'Amount must be greater than 0');
+                return;
+            }
+
+            if (parseFloat(quantity) > finalUserBalance) {
+                logger.error('hanndleComplete', 'Insufficient balance', 'Amount exceeds available balance');
                 return;
             }
 
@@ -144,23 +161,30 @@ const Lock = () => {
                 />
 
                 <AppView style={styles.sliderBtnContainer}>
-                    <SlideButton
-                        startIcon={<Ionicons name='chevron-forward-sharp' color={'white'} />}
-                        endIcon={<Ionicons size={18} name={transactionCompleted ? "checkmark" : "finger-print-outline"} color={'white'} />}
-                        fillColor={accent as any}
-                        handleColor={'#000000'}
-                        baseColor={text + '10'}
-                        aboveText="locking assets..."
-                        finalText={transactionCompleted ? "Success!" : "Initialized..."}
-                        shimmerTextProps={{
-                            text: 'Slide to lock',
-                            speed: 4000,
-                            color: text + '80'
-                        }}
-                        style={styles.ctaSlideButton}
-                        completed={completed}
-                        onComplete={hanndleComplete}
-                    />
+                    <AppView style={{ opacity: isValidInput() ? 1 : 0.4 }}>
+                        <SlideButton
+                            startIcon={<Ionicons name='chevron-forward-sharp' color={'white'} />}
+                            endIcon={<Ionicons size={18} name={transactionCompleted ? "checkmark" : "finger-print-outline"} color={'white'} />}
+                            fillColor={accent as any}
+                            handleColor={'#000000'}
+                            baseColor={text + '10'}
+                            aboveText="locking assets..."
+                            finalText={transactionCompleted ? "Success!" : "Initialized..."}
+                            shimmerTextProps={{
+                                text: isValidInput() ? 'Slide to lock' : 'Enter amount to lock',
+                                speed: 4000,
+                                color: text + '80'
+                            }}
+                            style={styles.ctaSlideButton}
+                            completed={completed}
+                            onComplete={hanndleComplete}
+                        />
+                    </AppView>
+                    {!isValidInput() && quantity !== '' && parseFloat(quantity) > finalUserBalance && (
+                        <AppText type="caption" style={styles.errorText}>
+                            Insufficient balance
+                        </AppText>
+                    )}
                 </AppView>
             </AppView>
         </AppPage>
@@ -191,6 +215,12 @@ export const styles = StyleSheet.create({
     },
     sliderBtnContainer: {
         paddingBottom: 30
+    },
+    errorText: {
+        color: '#ff4444',
+        textAlign: 'center',
+        marginTop: 8,
+        opacity: 0.9
     }
 })
 

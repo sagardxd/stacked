@@ -32,19 +32,19 @@ const SummarySection: React.FC<SummarySectionProps> = ({
     // Calculate estimated returns based on APR and duration
     const durationInYears = durationUnit === 'Months' ? (duration / 12) : duration;
     const estimatedReturns = usdValue * durationInYears;
-    const totalValue = usdValue + estimatedReturns;
+    const totalValue = usdValue;
 
     return (
         <AppView style={styles.container}>
             {/* Estimated Returns */}
-            <AppView style={styles.row}>
+            {/* <AppView style={styles.row}>
                 <AppView>
                     <AppText type='body' style={{ color: text }}>Estimated returns</AppText>
                 </AppView>
                 <AppView style={styles.returnsContainer}>
                     <AppText type='body' style={{ color: accent }}>+${estimatedReturns.toFixed(2)}</AppText>
                 </AppView>
-            </AppView>
+            </AppView> */}
 
             {/* Total Value */}
             <AppView style={[styles.row, styles.totalRow]}>

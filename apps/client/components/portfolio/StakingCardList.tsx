@@ -144,6 +144,18 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
         );
     }
 
+    // Show empty state if no assets after loading
+    if (allAssets.length === 0) {
+        return (
+            <View style={[styles.emptyContainer, { backgroundColor: cardBg }]}>
+                <AppText type="medium" style={styles.emptyTitle}>No Staking Positions</AppText>
+                <AppText type="caption" style={styles.emptyText}>
+                    Lock your SOL to start earning and see your positions here
+                </AppText>
+            </View>
+        );
+    }
+
     return (
         <ScrollView contentContainerStyle={{paddingBottom: 150}} showsVerticalScrollIndicator={false}>
             {allAssets.map((asset: StakingAsset | SipAsset) => (
@@ -176,5 +188,21 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 12,
         textAlign: 'center',
+    },
+    emptyContainer: {
+        padding: 40,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20,
+    },
+    emptyTitle: {
+        marginBottom: 8,
+        opacity: 0.9,
+    },
+    emptyText: {
+        textAlign: 'center',
+        opacity: 0.6,
+        maxWidth: 250,
     },
 });
