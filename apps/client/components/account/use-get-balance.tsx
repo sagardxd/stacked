@@ -13,6 +13,11 @@ export function useGetBalance({ address }: { address: PublicKey }) {
   return useQuery({
     queryKey,
     queryFn: () => connection.getBalance(address),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes
+    gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
   })
 }
 

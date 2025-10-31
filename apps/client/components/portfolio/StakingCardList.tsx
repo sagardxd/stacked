@@ -18,11 +18,11 @@ export const StakingCardList: React.FC<StakingCardListProps> = ({ onCardPress })
     const { setPositions, setLoading, isLoading } = useStakingStore();
     const cardBg = useThemeColor({}, 'cardBg');
 
-    // Set loading state
+    // Set loading state - only show loading on initial load, not on refetch
     useEffect(() => {
-        const loading = escrowAccounts.isLoading || escrowAccounts.isFetching;
+        const loading = escrowAccounts.isLoading && !escrowAccounts.data;
         setLoading(loading);
-    }, [escrowAccounts.isLoading, escrowAccounts.isFetching, setLoading]);
+    }, [escrowAccounts.isLoading, escrowAccounts.data, setLoading]);
 
     // Convert escrow data array to StakingAsset format
     const lockedEscrowAssets = useMemo((): StakingAsset[] => {

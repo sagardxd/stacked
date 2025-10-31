@@ -108,6 +108,11 @@ export function useEscrow() {
       }
     },
     enabled: !!connection && !!anchorWallet,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes
+    gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
   });
 
   // Fetch all escrows for the user
@@ -174,6 +179,12 @@ export function useEscrow() {
       return escrows;
     },
     enabled: !!connection && !!anchorWallet && !!userState.data,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 10 * 60 * 1000, // Consider data fresh for 10 minutes
+    gcTime: 15 * 60 * 1000, // Keep in cache for 15 minutes
+    notifyOnChangeProps: ['data', 'error'], // Only re-render when data or error changes
   });
 
   const initializeEscrow = useMutation({

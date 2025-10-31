@@ -20,6 +20,9 @@ const Home = () => {
                     <AppView style={styles.buttonContainer}>
                         <AppButton title='Lock Sol' onPress={() => router.push({ pathname: '/(tabs)/home/lock' })} type='secondary' buttonStyle={{ flex: 1 }} />
                     </AppView>
+                    <AppView style={styles.buttonContainer}>
+                        <AppButton title='SIP (coming soon)' onPress={() => {}} type='secondary' buttonStyle={{ flex: 1 }} />
+                    </AppView>
                 </View>
             </ScrollView>
         </AppPage>
@@ -37,7 +40,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         bottom: 0,
-        paddingBottom: 30,
     }
 })
 
