@@ -2,6 +2,10 @@
 
 Stacked is a Solana mobile investment app that enables users to invest simply, securely, and on their terms. The app provides traditional and on-chain investment options with features including portfolio management, staking, validator interactions, and time-locked escrow functionality. Built with Expo, React Native, and Anchor smart contracts, Stacked offers a seamless mobile experience for managing Solana-based investments.
 
+
+https://github.com/user-attachments/assets/92abaa8d-4ea9-4838-abc7-11cf14b26714
+
+
 ## Setup Instructions
 
 ### 1. Build Contracts
